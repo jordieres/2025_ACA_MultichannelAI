@@ -168,7 +168,7 @@ class Classifier:
 
     def expand_df(self, file_path: str) -> pd.DataFrame:
         """
-        Main method. Loads a CSV file, classifies the text interventions, annotates question-answer pairs, and loads the resulting csv file.
+        Loads a CSV file, classifies the text interventions, annotates question-answer pairs, and loads the resulting csv file.
 
         Args:
             file_path (str): The path to the CSV file.
@@ -180,3 +180,23 @@ class Classifier:
         df = self.annotate_question_answer_pairs(self.classify_interventions(pd.read_csv(file_path)))
         self.save_to_csv(df)
         return df
+    
+    def process_all_csvs(self, input_directory: str) -> None:
+        """
+        Processes all CSV files in the given directory and its subdirectories.
+        Each processed file is saved in the dynamically generated output path.
+
+        Args:
+            input_directory (str): The base directory containing the CSV files to process.
+
+        Returns:
+            None
+        """
+        for root, _, files in os.walk(input_directory):
+            for file in files:
+                if file.endswith('.csv'):
+                    file_path = os.path.join(root, file)
+                    try:
+                        self.expand_df(file_path)
+                    except Exception as e:
+                        print(f"Failed to process {file_path}: {e}")
