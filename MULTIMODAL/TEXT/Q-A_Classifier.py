@@ -1,8 +1,21 @@
+import os
+import json
+import pandas as pd
+
 import ollama
 
-import pandas as pd
-import os
 from dataclasses import dataclass
+from pydantic import BaseModel
+from typing import Literal
+
+
+class Category_QA(BaseModel):
+  """
+  A class created to define the output for the LLM.
+  Attributes:
+      category (str): The name of the category predicted by the LLM
+  """
+  category: Literal['Question', 'Answer', 'Procedure']
 
 
 @dataclass
@@ -66,11 +79,9 @@ class Classifier:
                 'role': 'system',
                 'content': """
                 You are a model designed to classify interventions in meetings or conferences into three categories:
-                1. "Question": If the intervention has an interrogative tone or seeks information.
-                2. "Answer": If the intervention provides information or responds to a previous question.
-                3. "Procedure": If the intervention is part of the meeting protocol, such as acknowledgments, moderation steps, or phrases without substantial informational content.
-
-                Always respond with one of these three words: "Question," "Answer," or "Procedure."
+                [Question]: If the intervention has an interrogative tone or seeks information.
+                [Answer]: If the intervention provides information or responds to a previous question.
+                [Procedure]: If the intervention is part of the meeting protocol, such as acknowledgments, moderation steps, or phrases without substantial informational content.
                 """
             },
             {
@@ -81,7 +92,14 @@ class Classifier:
             }
         ]
 
-        return ollama.chat(model=self.model, messages=messages).message.content.strip('"')
+        result = json.loads(ollama.chat(model=self.model, messages=messages, format=Category_QA.model_json_schema()).message.content)['category']
+    
+        # Validate the result
+        if result in {"Question", "Answer", "Procedure"}:
+            return result
+        else:
+            print(f"Unexpected classification result. Retrying...")
+            return self.classify_text(text)  # Retry with the same text
 
     def classify_interventions(self, df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -131,7 +149,7 @@ class Classifier:
 
         return df
     
-    def save_to_csv(self, df: pd.DataFrame) -> None:
+    def save_to_csv(self, df: pd.DataFrame, output_path: str) -> None:
         """
         Saves the given DataFrame to the specified output path in CSV format.
 
@@ -142,9 +160,9 @@ class Classifier:
             None
         """
         try:
-            df.to_csv(self.output_path, index=False)
+            df.to_csv(output_path, index=False)
         except Exception as e:
-            raise ValueError(f"Failed to save DataFrame to {self.output_path}: {e}")
+            raise ValueError(f"Failed to save DataFrame to {output_path}: {e}")
         
     def _generate_output_path(self, file_path: str) -> str:
         """
@@ -168,7 +186,7 @@ class Classifier:
 
     def expand_df(self, file_path: str) -> pd.DataFrame:
         """
-        Loads a CSV file, classifies the text interventions, annotates question-answer pairs, and loads the resulting csv file.
+        Main method. Loads a CSV file, classifies the text interventions, annotates question-answer pairs, and loads the resulting csv file.
 
         Args:
             file_path (str): The path to the CSV file.
@@ -176,9 +194,9 @@ class Classifier:
         Returns:
             pd.DataFrame: A DataFrame with classified and annotated data.
         """
-        self.output_path = self._generate_output_path(file_path)
+        output_path = self._generate_output_path(file_path)
         df = self.annotate_question_answer_pairs(self.classify_interventions(pd.read_csv(file_path)))
-        self.save_to_csv(df)
+        self.save_to_csv(df, output_path)
         return df
     
     def process_all_csvs(self, input_directory: str) -> None:
@@ -194,7 +212,7 @@ class Classifier:
         """
         for root, _, files in os.walk(input_directory):
             for file in files:
-                if file.endswith('.csv'):
+                if file.endswith('.csv'):  # Only process CSV files
                     file_path = os.path.join(root, file)
                     try:
                         self.expand_df(file_path)
