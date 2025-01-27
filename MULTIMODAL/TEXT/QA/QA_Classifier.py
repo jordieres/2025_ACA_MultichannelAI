@@ -19,7 +19,7 @@ class Category_QA(BaseModel):
 
 
 @dataclass
-class Classifier:
+class Classifier_QA:
     """
     A classifier designed to process and annotate text interventions from meetings or conferences.
 
