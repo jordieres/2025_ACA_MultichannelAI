@@ -1,7 +1,7 @@
 from k10.Classifier_10k import Classifier_10K
-from QA.QA_Classifier import Classifier_QA
+from Q_A.QA_Classifier import Classifier_QA
 
-from dataclasses import dataclass
+from dataclasses import dataclass  
 
 
 @dataclass
@@ -15,7 +15,8 @@ class GlobalClassification:
         input_files_path (str): Path to the directory containing input CSV files.
         annotated_output_path (str): Path to the directory where annotated CSV files will be stored.
     """
-    model: str
+    model_QA: str
+    model_10k: str
     input_files_path: str
     annotated_output_path: str
 
@@ -23,10 +24,10 @@ class GlobalClassification:
         """
         Initializes the classifier instances after the dataclass attributes have been set.
         """
-        self.classifier_qa = Classifier_QA(self.model, self.annotated_output_path)
+        self.classifier_qa = Classifier_QA(self.model_QA, self.annotated_output_path)
         self.classifier_10k = Classifier_10K(
             annotated_csv_path=self.annotated_output_path,
-            model=self.model
+            model=self.model_10k
         )
 
     def process_qa_csvs(self):
