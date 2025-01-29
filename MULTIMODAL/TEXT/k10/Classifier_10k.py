@@ -246,3 +246,18 @@ class Classifier_10K:
                         self.save_json_from_csv(file_path, classified_pairs)
                     except Exception as e:
                         print(f"Failed to process {file_path}: {e}")
+
+
+    def classify_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Given a dataframe with a column 'text', classify each text using the get_pred method.
+        Adds two new columns: 'classificacion' (category assigned) and 'confidence' (model confidence in prediction).
+
+        Args:
+            df (pd.DataFrame): Input dataframe containing a 'text' column.
+
+        Returns:
+            pd.DataFrame: Dataframe with two new columns: 'classificacion' and 'confidence'.
+        """
+        df[['classification', 'confidence']] = df['text'].apply(lambda text: pd.Series(self.get_pred(text)))
+        return df
