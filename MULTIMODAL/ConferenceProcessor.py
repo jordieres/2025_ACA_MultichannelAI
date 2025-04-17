@@ -3,16 +3,16 @@ from typing import List
 
 import pandas as pd
 import json
+import time
 import os
 
-from TEXT.Analyze.EnsembleInterventionAnalyzer import EnsembleInterventionAnalyzer
-from TEXT.Classify.EnsembleInterventionClassifier import EnsembleInterventionClassifier
+from MULTIMODAL.TEXT.Analyze.EnsembleInterventionAnalyzer import EnsembleInterventionAnalyzer
+from MULTIMODAL.TEXT.Classify.EnsembleInterventionClassifier import EnsembleInterventionClassifier
 
 
 @dataclass
-class InterventionManager:
+class ConferenceProcessor:
     input_csv_path: str = 'file_paths.csv'
-    # models: List[str] = field(default_factory=lambda: ['llama3', 'llama3.1:8b', 'phi4'])
     qa_models: List[str] = field(default_factory=lambda: ['llama3', 'llama3.1:8b', 'phi4'])
     monologue_models: List[str] = field(default_factory=lambda: ['llama3', 'llama3.1:8b', 'phi4'])
     sec10k_models: List[str] = field(default_factory=lambda: ['llama3', 'llama3.1:8b', 'phi4'])
@@ -58,6 +58,9 @@ class InterventionManager:
             output_json_path = os.path.join(processed_path, "transcript.json")
 
             try:
+
+                start_time = time.time()
+
                 # === Classification ===
                 df = self.classifier.preprocessor.preprocess(file_path, json_path)
                 df = self.classifier.classify_dataframe(df)
@@ -67,15 +70,16 @@ class InterventionManager:
                 # === Analysis ===
                 self.analyzer.initialize_multimodal_model(output_csv_path, original_path)
                 output = self.analyzer.generate_structured_output()
+
+                elapsed_time = time.time() - start_time
+                output["processing_time_seconds"] = round(elapsed_time, 2)
                 with open(output_json_path, 'w') as f:
                     json.dump(output, f, indent=4)
 
-                # print(f"[OK] Procesado y guardado en: {processed_path}")
-                self._print(f"[OK] Procesado y guardado en: {processed_path}")
+                self._print(f"[OK] Procesado y guardado en: {processed_path} (Tiempo: {round(elapsed_time, 2)}s)")
 
             except Exception as e:
                 print(f"[ERROR] Fallo en {file_path}: {e}\n")
-                # self._print(f"[ERROR] Fallo en {file_path}: {e}\n")
 
     
     def _print(self, *args, **kwargs):

@@ -7,8 +7,8 @@ from .QuestionAnswerAnalizer import QAAnalyzer
 from .CoherenceAnalyzer import CoherenceAnalyzer
 from .MultiModalEmbeddings import MultimodalEmbeddings
 
-from clean_src.AUDIO.AudioEmotionAnalzer import AudioEmotionAnalysis
-from clean_src.TEXT.Analyze.TextEmotionAnalyzer import TextEmotionAnalyzer
+from MULTIMODAL.AUDIO.AudioEmotionAnalzer import AudioEmotionAnalysis
+from MULTIMODAL.TEXT.Analyze.TextEmotionAnalyzer import TextEmotionAnalyzer
 
 
 @dataclass
@@ -31,12 +31,10 @@ class EnsembleInterventionAnalyzer:
         results = []
         model_confidences = {}  # Para guardar: nombre_modelo -> (categoría, confianza)
 
-        # print_header("Predicciones individuales")
         self._print_header("Predicciones individuales")
 
         for clf in self.classifiers:
             cat, conf = clf.get_pred(text)
-            # print(f"[{clf.model}] Predicted: {cat} | Confidence: {conf:.1f}%")
             self._print(f"[{clf.model}] Predicted: {cat} | Confidence: {conf:.1f}%")
             results.append((cat, conf))
             model_confidences[clf.model] = {"Predicted_category": cat, "Confidence": round(conf, 2)}
@@ -50,8 +48,6 @@ class EnsembleInterventionAnalyzer:
         best_cat, total_conf = max(conf_sum.items(), key=lambda x: x[1])
         avg_conf = round(total_conf / len(self.classifiers), 2)
 
-        # print_header("Resultado combinado")
-        # print(f"✅ Final prediction: {best_cat} | Combined confidence: {avg_conf:.1f}%")
         self._print_header("Resultado combinado")
         self._print(f"✅ Final prediction: {best_cat} | Combined confidence: {avg_conf:.1f}%")
 
@@ -64,10 +60,6 @@ class EnsembleInterventionAnalyzer:
 
         if not all(map(os.path.exists, [path_csv, path_json, path_audio])):
             raise FileNotFoundError("Faltan uno o más archivos requeridos para embeddings")
-        
-        # print("CSV PATH: ", path_csv)
-        # print("JSON PATH: ", path_json)
-        # print("MP3 PATH: ", path_audio)
 
         self.multimodal_embeddings = MultimodalEmbeddings(
             path_csv=path_csv,

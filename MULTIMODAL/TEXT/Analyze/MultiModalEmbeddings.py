@@ -16,8 +16,8 @@ def dummy_npwarn_decorator_factory():
 np._no_nep50_warning = getattr(np, '_no_nep50_warning', dummy_npwarn_decorator_factory)
 
 
-from clean_src.AUDIO.AudioEmotionAnalzer import AudioEmotionAnalysis
-from clean_src.TEXT.Analyze.TextEmotionAnalyzer import TextEmotionAnalyzer
+from MULTIMODAL.AUDIO.AudioEmotionAnalzer import AudioEmotionAnalysis
+from MULTIMODAL.TEXT.Analyze.TextEmotionAnalyzer import TextEmotionAnalyzer
 
 @dataclass
 class MultimodalEmbeddings:
