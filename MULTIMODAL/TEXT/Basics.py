@@ -1,7 +1,6 @@
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
-import pandas as pd
 import ollama
+
 from collections import Counter
 
 
@@ -22,30 +21,9 @@ class LLMClient:
             print(f"Model downloaded: {self.model}")
 
     def chat(self, messages: list, schema=None) -> str:
-        response = ollama.chat(model=self.model, messages=messages, format=schema) if schema \
-                   else ollama.chat(model=self.model, messages=messages)
-        return response.message.content
-    
-
-@dataclass
-class BaseClassifier(ABC):
-    llm: LLMClient
-
-    @abstractmethod
-    def classify_text(self, text: str) -> str:
-        """
-        Método abstracto que debe implementar la lógica de clasificación de texto.
-        """
-        pass
-
-    def classify_dataframe(self, df: pd.DataFrame, text_column: str = 'text') -> pd.DataFrame:
-        """
-        Clasifica cada entrada del DataFrame en base al contenido de una columna de texto.
-        Añade una columna 'classification' con los resultados.
-        """
-        df['classification'] = df[text_column].apply(self.classify_text)
-        return df  
-
+        response = ollama.chat(model=self.model, messages=messages, format=schema, options={'temperature': 0}) if schema \
+                   else ollama.chat(model=self.model, messages=messages, options={'temperature': 0})
+        return response.message.content 
 
 class UncertaintyMixin:
     def get_result_and_uncertainty(self, predict_fn, text: str, n: int = 5):

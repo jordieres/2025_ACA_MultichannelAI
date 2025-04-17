@@ -8,7 +8,7 @@ from typing import List, Dict
 
 
 @dataclass
-class TextEmotionClassifier:
+class TextEmotionAnalyzer:
     model_name: str = "j-hartmann/emotion-english-distilroberta-base"
     device: str = 'cuda' if torch.cuda.is_available() else 'cpu'
 
