@@ -10,7 +10,6 @@ from .Basics import AudioEmotionRecognizer
 class Emotion2VecRecognizer(AudioEmotionRecognizer):
     model_name: str = "iic/emotion2vec_plus_large"
     device: str = "cuda"
-    # embeddings_output_dir: str = f'/home/aacastro/Alejandro/ACA_MultichanelAI_2025/src/AUDIO/sim_results/emo2vec/{model_name}/'
 
     def __post_init__(self):
         self.model = AutoModel(model=self.model_name, device=self.device)
@@ -18,8 +17,6 @@ class Emotion2VecRecognizer(AudioEmotionRecognizer):
     def predict_from_wav(self, wav_path: str) -> Dict[str, Dict[str, float]]:
         result = self.model.generate(
             wav_path,
-            # output_dir=self.embeddings_output_dir,
-            # granularity="utterance",
             extract_embedding=False,
             device=self.device
         )

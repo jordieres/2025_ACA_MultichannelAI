@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pydantic import BaseModel
-from typing import List, Literal, Optional
+from typing import List
 
 import json
 import ollama
@@ -14,8 +14,6 @@ class ContradictionDetail(BaseModel):
 
 
 class CoherenceAnalysis(BaseModel):
-    # monologue: str
-    # response: str
     topic_covered: bool
     consistent: bool
     summary: str

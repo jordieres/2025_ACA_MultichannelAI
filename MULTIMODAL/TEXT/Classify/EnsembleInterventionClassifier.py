@@ -36,7 +36,6 @@ class EnsembleInterventionClassifier:
         for clf in classifiers:
             cat, conf = clf.get_pred(text)
             individual_preds.append((clf.model, cat, conf))
-            # print(f"[{clf.model}] Predicted: {cat} | Confidence: {conf:.2f}%")
             self._print(f"[{clf.model}] Predicted: {cat} | Confidence: {conf:.2f}%")
 
         # Agrupar confianzas por categoría
@@ -47,9 +46,6 @@ class EnsembleInterventionClassifier:
         best_cat, total_conf = max(conf_sum.items(), key=lambda x: x[1])
         avg_conf = round(total_conf / len(classifiers), 2)
 
-        # print(f"\n========== Resultado combinado ==========")
-        # print(f"✅ Final prediction: {best_cat} | Combined confidence: {avg_conf:.2f}%")
-        # print('\n' + '='*100 + '\n')
         self._print_header("Resultado combinado")
         self._print(f"✅ Final prediction: {best_cat} | Combined confidence: {avg_conf:.2f}%")
         self._print('\n' + '=' * 100 + '\n')

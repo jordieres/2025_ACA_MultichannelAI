@@ -29,7 +29,6 @@ class TranscriptPreprocessor:
     def preprocess(self, csv_path: str, json_path: str) -> pd.DataFrame:
         df = pd.read_csv(csv_path)
 
-        # print("[INFO] Preprocessing...")
         qna_intro = self.extract_qna_intro(json_path)
 
         if qna_intro and self.text_col in df.columns:
@@ -41,6 +40,5 @@ class TranscriptPreprocessor:
                 df[self.section_col] = 'prepared_remarks'
         else:
             df[self.section_col] = 'prepared_remarks'
-        # print("[INFO] Finished preprocessing...")
 
         return df

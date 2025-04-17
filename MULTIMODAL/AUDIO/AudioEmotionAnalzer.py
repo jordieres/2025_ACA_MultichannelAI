@@ -9,7 +9,6 @@ class AudioEmotionAnalysis:
     mode: str = "emotion2vec"
     device: str = 'cuda' if torch.cuda.is_available() else 'cpu'
     model_name: str = "iic/emotion2vec_plus_large"
-    # embeddings_output_dir: str = None
 
     def __post_init__(self):
         match self.mode:
