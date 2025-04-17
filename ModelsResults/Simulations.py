@@ -1,8 +1,8 @@
 import pandas as pd
 
-from clean_src.ModelsResults.QA.QASimulator import QASimulator
-from clean_src.ModelsResults.Monologues.MonologueSimulator import MonologueSimulator
-from clean_src.ModelsResults.SEC10K.SEC10KSimulator import TenKSimulator
+from QA.QASimulator import QASimulator
+from Monologues.MonologueSimulator import MonologueSimulator
+from SEC10K.SEC10KSimulator import TenKSimulator
 
 def main():
     models = [
@@ -46,7 +46,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-# Results (See src/ModelResults/): 
+# Results (See ModelResults/): 
 
 # Models for QA: ['llama3:8b', 'phi4', 'gemma2:9b']
 # Models for Monologues: ['llama3:8b', 'llama3.1:8b', 'deepseek-r1:14b']
