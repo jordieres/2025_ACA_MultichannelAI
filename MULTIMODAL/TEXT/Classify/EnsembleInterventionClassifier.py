@@ -10,8 +10,8 @@ from .TranscriptPreprocessor import TranscriptPreprocessor
 
 @dataclass
 class EnsembleInterventionClassifier:
-    qa_model_names: List[str] = field(default_factory=lambda: ['llama3', 'mistral', 'mixtral'])
-    monologue_model_names: List[str] = field(default_factory=lambda: ['llama3', 'mistral', 'mixtral'])
+    qa_model_names: List[str]
+    monologue_model_names: List[str]
     NUM_EVALUATIONS: int = 5
     verbose: int = 1
 

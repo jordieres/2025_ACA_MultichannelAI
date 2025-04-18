@@ -12,10 +12,13 @@ from MULTIMODAL.TEXT.Classify.EnsembleInterventionClassifier import EnsembleInte
 
 @dataclass
 class ConferenceProcessor:
-    input_csv_path: str = 'file_paths.csv'
-    qa_models: List[str] = field(default_factory=lambda: ['llama3', 'llama3.1:8b', 'phi4'])
-    monologue_models: List[str] = field(default_factory=lambda: ['llama3', 'llama3.1:8b', 'phi4'])
-    sec10k_models: List[str] = field(default_factory=lambda: ['llama3', 'llama3.1:8b', 'phi4'])
+    input_csv_path: str
+    qa_models: List[str]
+    monologue_models: List[str]
+    sec10k_models: List[str]
+    qa_analyzer_model: str
+    audio_model_name: str 
+    text_model_name: str
     evals: int = 3
     verbose: int = 1
 
@@ -29,6 +32,9 @@ class ConferenceProcessor:
 
         self.analyzer = EnsembleInterventionAnalyzer(
             sec10k_model_names=self.sec10k_models,
+            qa_analyzer_model=self.qa_analyzer_model,
+            audio_model_name=self.audio_model_name,
+            text_model_name=self.text_model_name,
             NUM_EVALUATIONS=self.evals,
             verbose=self.verbose
         )

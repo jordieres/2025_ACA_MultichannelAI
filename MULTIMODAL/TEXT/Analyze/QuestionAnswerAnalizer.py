@@ -76,15 +76,15 @@ class QAAnalyzer:
         response = self.llm.chat(messages, schema=InterventionAnalysis.model_json_schema())
         return json.loads(response)
 
-    def get_pred(self, intervention: str, response: str) -> Optional[str]:
-        try:
-            result = self.analize_qa(intervention, response)
-            evaluations = result.get('evaluations', [])
-            if len(evaluations) == 1:
-                return evaluations[0]['answered']
-        except Exception as e:
-            print(f"Error processing intervention: {intervention[:30]}... -> {e}")
-        return None
+    # def get_pred(self, intervention: str, response: str) -> Optional[str]:
+    #     try:
+    #         result = self.analize_qa(intervention, response)
+    #         evaluations = result.get('evaluations', [])
+    #         if len(evaluations) == 1:
+    #             return evaluations[0]['answered']
+    #     except Exception as e:
+    #         print(f"Error processing intervention: {intervention[:30]}... -> {e}")
+    #     return None
 
     def analize_qa_question(self, question: str, response: str):
         messages = self.prompt_builder.analize_qa(question, response)
@@ -119,9 +119,29 @@ class QAAnalyzer:
             print(f"❌ Error processing question: {question[:30]}... -> {e}")
             return None
 
-    def classify_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
-        def classify_row(row):
-            return self.get_pred_question(row['intervention'], row['response'])
-        df['classification'] = df.apply(classify_row, axis=1)
-        return df
+    # def classify_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
+    #     def classify_row(row):
+    #         return self.get_pred_question(row['intervention'], row['response'])
+    #     df['classification'] = df.apply(classify_row, axis=1)
+    #     return df
+    
+    def evaluate_qa_model(self, data: list):
+        results = []
+
+        for example in data:
+            response = example['response']
+            for q in example['label']:
+                question = q['question']
+                true_label = q['answered']
+                pred_label = self.get_pred_question(question, response)
+
+                if pred_label is not None:  # Ignorar predicciones nulas
+                    results.append({
+                        "question": question,
+                        "response": response,
+                        "label": true_label,
+                        "classification": pred_label
+                    })
+
+        return pd.DataFrame(results)
     

@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List
 import os
 
@@ -13,7 +13,10 @@ from MULTIMODAL.TEXT.Analyze.TextEmotionAnalyzer import TextEmotionAnalyzer
 
 @dataclass
 class EnsembleInterventionAnalyzer:
-    sec10k_model_names: List[str] = field(default_factory=lambda: ['llama3:8b', 'llama3.1:8b', 'phi4'])
+    sec10k_model_names: List[str]
+    qa_analyzer_model: str
+    audio_model_name: str
+    text_model_name: str
     NUM_EVALUATIONS: int = 5
     verbose: int = 1
 
@@ -22,10 +25,10 @@ class EnsembleInterventionAnalyzer:
             InterventionAnalyzer(model=name, NUM_EVALUATIONS=self.NUM_EVALUATIONS)
             for name in self.sec10k_model_names]
         
-        self.qa_analyzer = QAAnalyzer(model_name=self.sec10k_model_names[0])
-        self.coherence_analyzer = CoherenceAnalyzer(model_name=self.sec10k_model_names[0])
-        self.audio_emotion_analyzer = AudioEmotionAnalysis()
-        self.text_emotion_analyzer = TextEmotionAnalyzer()
+        self.qa_analyzer = QAAnalyzer(model_name=self.qa_analyzer_model)
+        self.coherence_analyzer = CoherenceAnalyzer(model_name=self.qa_analyzer_model)
+        self.audio_emotion_analyzer = AudioEmotionAnalysis(model_name=self.audio_model_name)
+        self.text_emotion_analyzer = TextEmotionAnalyzer(model_name=self.text_model_name)
 
     def ensemble_predict(self, text: str):
         results = []
