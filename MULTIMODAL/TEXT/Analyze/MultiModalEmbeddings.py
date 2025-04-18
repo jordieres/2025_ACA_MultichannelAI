@@ -111,7 +111,7 @@ class MultimodalEmbeddings:
             # display(Audio(segmento.export(format="mp3").read(), rate=44100))
 
             # Crear archivo temporal WAV
-            temp_wav = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+            temp_wav = tempfile.NamedTemporaryFile(suffix=".wav", delete=True)
             segmento.export(temp_wav.name, format="wav")
 
             return temp_wav

@@ -16,13 +16,14 @@ class ConferenceProcessor:
     qa_models: List[str]
     monologue_models: List[str]
     sec10k_models: List[str]
-    qa_analyzer_model: str
+    qa_analyzer_models: List[str]
     audio_model_name: str 
     text_model_name: str
     evals: int = 3
     verbose: int = 1
 
     def __post_init__(self):
+
         self.classifier = EnsembleInterventionClassifier(
             qa_model_names=self.qa_models,
             monologue_model_names=self.monologue_models,
@@ -32,7 +33,7 @@ class ConferenceProcessor:
 
         self.analyzer = EnsembleInterventionAnalyzer(
             sec10k_model_names=self.sec10k_models,
-            qa_analyzer_model=self.qa_analyzer_model,
+            qa_analyzer_models=self.qa_analyzer_models,
             audio_model_name=self.audio_model_name,
             text_model_name=self.text_model_name,
             NUM_EVALUATIONS=self.evals,

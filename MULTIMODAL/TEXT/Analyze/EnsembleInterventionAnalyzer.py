@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List
+import random
 import os
 
 from .InterventionAnalyzer import InterventionAnalyzer
@@ -14,7 +15,7 @@ from MULTIMODAL.TEXT.Analyze.TextEmotionAnalyzer import TextEmotionAnalyzer
 @dataclass
 class EnsembleInterventionAnalyzer:
     sec10k_model_names: List[str]
-    qa_analyzer_model: str
+    qa_analyzer_models: List[str]
     audio_model_name: str
     text_model_name: str
     NUM_EVALUATIONS: int = 5
@@ -25,10 +26,68 @@ class EnsembleInterventionAnalyzer:
             InterventionAnalyzer(model=name, NUM_EVALUATIONS=self.NUM_EVALUATIONS)
             for name in self.sec10k_model_names]
         
-        self.qa_analyzer = QAAnalyzer(model_name=self.qa_analyzer_model)
-        self.coherence_analyzer = CoherenceAnalyzer(model_name=self.qa_analyzer_model)
+        self.analyzers = [
+            QAAnalyzer(model_name=name, NUM_EVALUATIONS=self.NUM_EVALUATIONS)
+            for name in self.qa_analyzer_models]
+        
+        self.coherence_analyzer = CoherenceAnalyzer(model_name=self.qa_analyzer_models[0])
         self.audio_emotion_analyzer = AudioEmotionAnalysis(model_name=self.audio_model_name)
         self.text_emotion_analyzer = TextEmotionAnalyzer(model_name=self.text_model_name)
+
+    def ensemble_qa_analysis(self, question: str, answer: str):
+        results = []  # (cat, conf, model_name, raw_outputs)
+        model_confidences = {}
+
+        self._print_header("Evaluación QA por modelo")
+
+        for analyzer in self.analyzers:
+            # analyzer = QAAnalyzer(model_name=name, NUM_EVALUATIONS=self.NUM_EVALUATIONS)
+            cat, conf, details = analyzer.get_pred(question, answer)
+            if not cat:
+                continue
+            results.append((cat, conf, analyzer.model_name, details["raw_outputs"]))
+            model_confidences[analyzer.model_name] = {
+                "Predicted_category": cat,
+                "Confidence": round(conf, 2)
+            }
+            self._print(f"[{analyzer.model_name}] → {cat} ({conf:.1f}%)")
+
+        if not results:
+            return None, 0.0, model_confidences, {}
+
+        # Combinar confianzas por categoría
+        conf_sum = {}
+        for cat, conf, *_ in results:
+            conf_sum[cat] = conf_sum.get(cat, 0.0) + conf
+
+        final_cat, total_conf = max(conf_sum.items(), key=lambda x: x[1])
+        avg_conf = round(total_conf / len(results), 2)
+
+        self._print_header("Resultado QA combinado")
+        self._print(f"✅ Final QA prediction: {final_cat} | Confidence: {avg_conf:.1f}%")
+
+        # Elegir modelo con más confianza para esta categoría
+        best_models = [r for r in results if r[0] == final_cat]
+        best_models_sorted = sorted(best_models, key=lambda x: x[1], reverse=True)
+        top_conf = best_models_sorted[0][1]
+        top_candidates = [r for r in best_models_sorted if r[1] == top_conf]
+        selected_model = random.choice(top_candidates)
+
+        raw_outputs = selected_model[3]
+        best_detail = None
+        for raw in raw_outputs:
+            evaluations = raw.get("evaluations", [])
+            for ev in evaluations:
+                if ev.get("answered") == final_cat:
+                    best_detail = {
+                        "answer_summary": ev.get("answer_summary"),
+                        "answer_quote": ev.get("answer_quote")
+                    }
+                    break
+            if best_detail:
+                break
+
+        return final_cat, avg_conf, model_confidences, best_detail or {}
 
     def ensemble_predict(self, text: str):
         results = []
@@ -116,9 +175,12 @@ class EnsembleInterventionAnalyzer:
             a_cat, a_conf, a_models = self.ensemble_predict(answer_text)
 
             try:
-                evaluations = self.qa_analyzer.analize_qa(question_text, answer_text).get("evaluations", [])
+                # evaluations = self.qa_analyzer.analize_qa(question_text, answer_text).get("evaluations", [])
+                qa_cat, qa_conf, qa_models, qa_details = self.ensemble_qa_analysis(question_text, answer_text)
             except:
-                evaluations = []
+                print(f"❌ Error processing QA analysis for pair {pair_id}: {question_text} -> {answer_text}")
+                qa_cat, qa_conf, qa_models, qa_details = None, 0.0, {}, {}
+                # evaluations = []
 
             coherence_analyses = []
             for mono_id, monologue in result["monologue_interventions"].items():
@@ -142,7 +204,12 @@ class EnsembleInterventionAnalyzer:
                     "Confidence": a_conf,
                     "Model_confidences": a_models
                 },
-                "evaluations": evaluations,
+                "qa_response_classification": {
+                    "Predicted_category": qa_cat,
+                    "Confidence": qa_conf,
+                    "Model_confidences": qa_models,
+                    "best_model_details": qa_details
+                },
                 "coherence_analyses": coherence_analyses,
                 "multimodal_embeddings": {
                     "question": {
