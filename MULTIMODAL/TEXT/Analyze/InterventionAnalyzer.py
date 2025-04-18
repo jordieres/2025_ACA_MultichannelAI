@@ -9,10 +9,7 @@ from ..Basics import LLMClient, UncertaintyMixin
 from ..Prompt_builder import PromptBuilder
 
 class Category10K(BaseModel):
-    category: Literal[
-        'Business', 'Risk Factors', 'Selected Financial Data', 'MD&A',
-        'Financial Statements and Supplementary Data', 'Other'
-    ]
+    category: Literal['Business', 'Risk Factors', 'MD&A', 'Other']
 
 @dataclass
 class InterventionAnalyzer(UncertaintyMixin):

@@ -3,11 +3,12 @@ from pydantic import BaseModel
 from typing import List, Literal, Optional
 
 import pandas as pd
+import difflib
 import json
-
 
 from ..Basics import LLMClient, UncertaintyMixin
 from ..Prompt_builder import PromptBuilder
+
 
 class EvaluatedQA(BaseModel):
     question: str
@@ -21,51 +22,10 @@ class InterventionAnalysis(BaseModel):
     evaluations: List[EvaluatedQA]
 
 
-# @dataclass
-# class QAAnalyzer:
-#     model_name: str = "llama3"
-
-#     def __post_init__(self):
-#         self.prompt_builder = PromptBuilder()
-#         self.llm = LLMClient(self.model_name)
-
-#     def analize_qa(self, intervention: str, response: str):
-#         messages = self.prompt_builder.analize_qa(intervention, response)
-#         response = self.llm.chat(messages, schema=InterventionAnalysis.model_json_schema())
-
-#         return json.loads(response)
-    
-#     def get_pred(self, intervention: str, response: str) -> Optional[str]:
-#         try:
-#             result = self.analize_qa(intervention, response)
-#             evaluations = result.get('evaluations', [])
-#             if len(evaluations) == 1:
-#                 return evaluations[0]['answered']
-#         except Exception as e:
-#             print(f"Error processing intervention: {intervention[:30]}... -> {e}")
-#         return None  # si no hay una única evaluación o hay error, se devuelve None
-
-#     def classify_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
-#         def classify_row(row):
-#             return self.get_pred(row['intervention'], row['response'])
-
-#         df['classification'] = df.apply(classify_row, axis=1)
-#         return df
-
-import difflib
-def find_best_eval(question, evaluations):
-    best_match = None
-    best_ratio = 0.0
-    for eval in evaluations:
-        ratio = difflib.SequenceMatcher(None, question.lower(), eval.get('question', '').lower()).ratio()
-        if ratio > best_ratio:
-            best_ratio = ratio
-            best_match = eval
-    return best_match
-
 @dataclass
-class QAAnalyzer:
+class QAAnalyzer(UncertaintyMixin):
     model_name: str = "llama3"
+    NUM_EVALUATIONS=1
 
     def __post_init__(self):
         self.prompt_builder = PromptBuilder()
@@ -75,25 +35,14 @@ class QAAnalyzer:
         messages = self.prompt_builder.analize_qa(intervention, response)
         response = self.llm.chat(messages, schema=InterventionAnalysis.model_json_schema())
         return json.loads(response)
-
-    # def get_pred(self, intervention: str, response: str) -> Optional[str]:
-    #     try:
-    #         result = self.analize_qa(intervention, response)
-    #         evaluations = result.get('evaluations', [])
-    #         if len(evaluations) == 1:
-    #             return evaluations[0]['answered']
-    #     except Exception as e:
-    #         print(f"Error processing intervention: {intervention[:30]}... -> {e}")
-    #     return None
-
-    def analize_qa_question(self, question: str, response: str):
-        messages = self.prompt_builder.analize_qa(question, response)
-        response = self.llm.chat(messages, schema=InterventionAnalysis.model_json_schema())
-        return json.loads(response)
+    
+    def get_pred(self, question: str, response: str):
+        predicted_categories = [self.get_pred_question(question, response) for _ in range(self.NUM_EVALUATIONS)]
+        return self.get_result_and_uncertainty(lambda _: predicted_categories.pop(0), text, self.NUM_EVALUATIONS)
 
     def get_pred_question(self, question: str, response: str) -> Optional[str]:
         try:
-            result = self.analize_qa_question(question, response)
+            result = self.analize_qa(question, response)
             evaluations = result.get('evaluations', [])
 
             if not evaluations:
@@ -118,12 +67,6 @@ class QAAnalyzer:
         except Exception as e:
             print(f"❌ Error processing question: {question[:30]}... -> {e}")
             return None
-
-    # def classify_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
-    #     def classify_row(row):
-    #         return self.get_pred_question(row['intervention'], row['response'])
-    #     df['classification'] = df.apply(classify_row, axis=1)
-    #     return df
     
     def evaluate_qa_model(self, data: list):
         results = []
@@ -135,7 +78,7 @@ class QAAnalyzer:
                 true_label = q['answered']
                 pred_label = self.get_pred_question(question, response)
 
-                if pred_label is not None:  # Ignorar predicciones nulas
+                if pred_label is not None:
                     results.append({
                         "question": question,
                         "response": response,
