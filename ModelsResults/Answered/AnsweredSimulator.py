@@ -1,19 +1,22 @@
 from dataclasses import dataclass
 import pandas as pd
+import json
 
-from MULTIMODAL.TEXT.Analyze.InterventionAnalyzer import InterventionAnalyzer
+from MULTIMODAL.TEXT.Analyze.QuestionAnswerAnalizer import QAAnalyzer
 from ..BaseLLMSimulator import BaseLLMSimulator
 from ..ModelMetrics import ModelMetrics
 
 @dataclass
-class TenKSimulator(BaseLLMSimulator):
+class AnsweredSimulator(BaseLLMSimulator):
     labeled_data_path: str
-    task_name: str = "SEC 10K Classification"
+    task_name: str = "Question-Answering"
 
     def classify_with_model(self, model_name: str) -> pd.DataFrame:
-        classifier = InterventionAnalyzer(model_name, NUM_EVALUATIONS=1)
-        df = pd.read_csv(self.labeled_data_path)
-        return classifier.classify_dataframe(df)
+        analyzer = QAAnalyzer(model_name=model_name)
+        with open(self.labeled_data_path) as f:
+            data = [json.loads(line) for line in f]
+        results_df = analyzer.evaluate_qa_model(data)
+        return results_df
 
     def evaluate_model(self, model_name: str, classified_df: pd.DataFrame) -> dict:
         evaluator = ModelMetrics(

@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 import pandas as pd
 
-from ...TEXT.Classify.MonologueClassifier import MonologueClassifier
+from MULTIMODAL.TEXT.Classify.MonologueClassifier import MonologueClassifier
 from ..BaseLLMSimulator import BaseLLMSimulator
-from ...ModelMetrics import ModelMetrics
+from ..ModelMetrics import ModelMetrics
 
 @dataclass
 class MonologueSimulator(BaseLLMSimulator):
