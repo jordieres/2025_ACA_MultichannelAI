@@ -9,7 +9,7 @@ from ModelsResults.Answered.AnsweredSimulator import AnsweredSimulator
 results_df = pd.DataFrame(columns=["model_name", "elapsed_time", "accuracy", "precision", "recall", "f1_score"])
 
 LLM_MODELS = [
-        'deepseek-r1:1.5b', 'deepseek-r1:7b', 'deepseek-r1:8b', 'deepseek-r1:14b', #'deepseek-r1:32b',
+        # 'deepseek-r1:1.5b', 'deepseek-r1:7b', 'deepseek-r1:8b', 'deepseek-r1:14b', #'deepseek-r1:32b',
         'llama3:8b', 
         'llama3.1:8b', 
         'llama3.2:1b', 'llama3.2:3b',
