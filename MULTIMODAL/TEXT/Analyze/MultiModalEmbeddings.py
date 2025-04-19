@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 import pandas as pd
 import numpy as np
@@ -24,8 +25,8 @@ class MultimodalEmbeddings:
     path_csv: str
     path_json: str
     audio_file_path: str
-    audio_emotion_analyzer: AudioEmotionAnalysis
-    text_emotion_analyzer: TextEmotionAnalyzer
+    audio_emotion_analyzer: Optional[AudioEmotionAnalysis] = None
+    text_emotion_analyzer: Optional[TextEmotionAnalyzer] = None
     
 
     def __post_init__(self):
@@ -121,17 +122,52 @@ class MultimodalEmbeddings:
             return None
         
     
+    # def generar_embeddings(self) -> pd.DataFrame:
+    #     audio_embs = []
+    #     text_embs = []
+
+    #     for _, row in self.sentences_df.iterrows():
+    #         temp_file = self.cortar_audio_temporal(row['start_time'], row['end_time'])
+    #         audio_emb = self.audio_emotion_analyzer.get_embeddings(temp_file.name)
+    #         text_emb = self.text_emotion_analyzer.get_embeddings(row['text'])
+
+    #         audio_embs.append(audio_emb.tolist() if hasattr(audio_emb, 'tolist') else audio_emb)
+    #         text_embs.append(text_emb.tolist() if hasattr(text_emb, 'tolist') else text_emb)
+
+    #     self.sentences_df["audio_embedding"] = audio_embs
+    #     self.sentences_df["text_embedding"] = text_embs
     def generar_embeddings(self) -> pd.DataFrame:
         audio_embs = []
         text_embs = []
 
         for _, row in self.sentences_df.iterrows():
-            temp_file = self.cortar_audio_temporal(row['start_time'], row['end_time'])
-            audio_emb = self.audio_emotion_analyzer.get_embeddings(temp_file.name)
-            text_emb = self.text_emotion_analyzer.get_embeddings(row['text'])
+            # === Audio Embeddings ===
+            if self.audio_emotion_analyzer is not None:
+                temp_file = self.cortar_audio_temporal(row['start_time'], row['end_time'])
+                if temp_file is not None:
+                    audio_emb = self.audio_emotion_analyzer.get_embeddings(temp_file.name)
+                    audio_embs.append(audio_emb.tolist() if hasattr(audio_emb, 'tolist') else audio_emb)
+                else:
+                    audio_embs.append(None)
+            else:
+                audio_embs.append(None)
 
-            audio_embs.append(audio_emb.tolist() if hasattr(audio_emb, 'tolist') else audio_emb)
-            text_embs.append(text_emb.tolist() if hasattr(text_emb, 'tolist') else text_emb)
+            # === Text Embeddings ===
+            if self.text_emotion_analyzer is not None:
+                text_emb = self.text_emotion_analyzer.get_embeddings(row['text'])
+                text_embs.append(text_emb.tolist() if hasattr(text_emb, 'tolist') else text_emb)
+            else:
+                text_embs.append(None)
 
-        self.sentences_df["audio_embedding"] = audio_embs
-        self.sentences_df["text_embedding"] = text_embs
+        # Asignación de columnas
+        if self.audio_emotion_analyzer is not None:
+            self.sentences_df["audio_embedding"] = audio_embs
+        else:
+            self.sentences_df["audio_embedding"] = [None] * len(self.sentences_df)
+
+        if self.text_emotion_analyzer is not None:
+            self.sentences_df["text_embedding"] = text_embs
+        else:
+            self.sentences_df["text_embedding"] = [None] * len(self.sentences_df)
+
+        return self.sentences_df

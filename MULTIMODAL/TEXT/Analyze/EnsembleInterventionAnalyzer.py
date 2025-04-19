@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 import random
 import os
 
@@ -16,8 +16,8 @@ from MULTIMODAL.TEXT.Analyze.TextEmotionAnalyzer import TextEmotionAnalyzer
 class EnsembleInterventionAnalyzer:
     sec10k_model_names: List[str]
     qa_analyzer_models: List[str]
-    audio_model_name: str
-    text_model_name: str
+    audio_model_name: Optional[str] = None
+    text_model_name: Optional[str] = None
     NUM_EVALUATIONS: int = 5
     verbose: int = 1
 
@@ -31,8 +31,8 @@ class EnsembleInterventionAnalyzer:
             for name in self.qa_analyzer_models]
         
         self.coherence_analyzer = CoherenceAnalyzer(model_name=self.qa_analyzer_models[0])
-        self.audio_emotion_analyzer = AudioEmotionAnalysis(model_name=self.audio_model_name)
-        self.text_emotion_analyzer = TextEmotionAnalyzer(model_name=self.text_model_name)
+        self.audio_emotion_analyzer = AudioEmotionAnalysis(model_name=self.audio_model_name) if self.audio_model_name else None
+        self.text_emotion_analyzer = TextEmotionAnalyzer(model_name=self.text_model_name) if self.text_model_name else None
 
     def ensemble_qa_analysis(self, question: str, answer: str):
         results = []  # (cat, conf, model_name, raw_outputs)
@@ -50,7 +50,7 @@ class EnsembleInterventionAnalyzer:
                 "Predicted_category": cat,
                 "Confidence": round(conf, 2)
             }
-            self._print(f"[{analyzer.model_name}] → {cat} ({conf:.1f}%)")
+            self._print(f"[{analyzer.model}] Predicted: {cat} | Confidence: {conf:.1f}%")
 
         if not results:
             return None, 0.0, model_confidences, {}
@@ -147,17 +147,10 @@ class EnsembleInterventionAnalyzer:
         monologues = df[df["classification"] == "Monologue"]
         for idx, group in monologues.groupby("intervention_id"):
             full_text = " ".join(group["text"])
-            audio_embs = group["audio_embedding"].tolist()
-            text_embs = group["text_embedding"].tolist()
-            num_sent = len(audio_embs)
 
             result["monologue_interventions"][str(idx)] = {
                 "text": full_text,
-                "multimodal_embeddings": {
-                    "num_sentences": num_sent,
-                    "audio": audio_embs,
-                    "text": text_embs
-                }
+                "multimodal_embeddings": self._get_multimodal_dict(group)
             }
 
         # QA PAIRS
@@ -175,12 +168,10 @@ class EnsembleInterventionAnalyzer:
             a_cat, a_conf, a_models = self.ensemble_predict(answer_text)
 
             try:
-                # evaluations = self.qa_analyzer.analize_qa(question_text, answer_text).get("evaluations", [])
                 qa_cat, qa_conf, qa_models, qa_details = self.ensemble_qa_analysis(question_text, answer_text)
             except:
                 print(f"❌ Error processing QA analysis for pair {pair_id}: {question_text} -> {answer_text}")
                 qa_cat, qa_conf, qa_models, qa_details = None, 0.0, {}, {}
-                # evaluations = []
 
             coherence_analyses = []
             for mono_id, monologue in result["monologue_interventions"].items():
@@ -212,16 +203,8 @@ class EnsembleInterventionAnalyzer:
                 },
                 "coherence_analyses": coherence_analyses,
                 "multimodal_embeddings": {
-                    "question": {
-                        "num_sentences": len(question_df["audio_embedding"].tolist()),
-                        "audio": question_df["audio_embedding"].tolist(),
-                        "text": question_df["text_embedding"].tolist()
-                    },
-                    "answer": {
-                        "num_sentences": len(answer_df["audio_embedding"].tolist()),
-                        "audio": answer_df["audio_embedding"].tolist(),
-                        "text": answer_df["text_embedding"].tolist()
-                    }
+                    "question": self._get_multimodal_dict(question_df),
+                    "answer": self._get_multimodal_dict(answer_df)
                 }
             }
 
@@ -234,3 +217,26 @@ class EnsembleInterventionAnalyzer:
     def _print_header(self, title):
         if self.verbose >= 1:
             print(f"\n{'='*10} {title} {'='*10}")
+
+    def _get_multimodal_dict(self, df_subset):
+        """
+        Genera el diccionario de multimodal_embeddings para una intervención.
+        Si no se han calculado embeddings, se pone None en su lugar.
+        """
+        num_sent = len(df_subset)
+        
+        if self.audio_emotion_analyzer is not None:
+            audio = df_subset["audio_embedding"].tolist()
+        else:
+            audio = None
+
+        if self.text_emotion_analyzer is not None:
+            text = df_subset["text_embedding"].tolist()
+        else:
+            text = None
+
+        return {
+            "num_sentences": num_sent if (audio or text) else None,
+            "audio": audio,
+            "text": text
+        }

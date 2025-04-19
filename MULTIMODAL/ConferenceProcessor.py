@@ -1,8 +1,9 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
 
 import pandas as pd
 import json
+import yaml
 import time
 import os
 
@@ -17,8 +18,9 @@ class ConferenceProcessor:
     monologue_models: List[str]
     sec10k_models: List[str]
     qa_analyzer_models: List[str]
-    audio_model_name: str 
-    text_model_name: str
+    audio_model_name: Optional[str] = None
+    text_model_name: Optional[str] = None
+    video_model_name: Optional[str] = None
     evals: int = 3
     verbose: int = 1
 
@@ -96,3 +98,30 @@ class ConferenceProcessor:
     def _print_header(self, title: str):
         if self.verbose >= 1:
             print(f"\n{'='*10} {title} {'='*10}")
+
+
+
+def load_config(config_path: str, config_name: str = "default") -> ConferenceProcessor:
+    with open(config_path, 'r') as f:
+        cfg = yaml.safe_load(f)
+    
+    conf = cfg['configs'][config_name]
+
+    # Verifica si se deben usar los modelos de audio y texto
+    audio_model = conf['embeddings']['audio']['model_name'] if conf['embeddings']['audio']['enabled'] else None
+    text_model = conf['embeddings']['text']['model_name'] if conf['embeddings']['text']['enabled'] else None
+    # Video aún no integrado, pero puedes extraerlo igual:
+    # video_model = conf['embeddings']['video']['model_name'] if conf['embeddings']['video']['enabled'] else None
+
+    processor = ConferenceProcessor(
+        input_csv_path=conf['input_csv_path'],
+        qa_models=conf['qa_models'],
+        monologue_models=conf['monologue_models'],
+        sec10k_models=conf['sec10k_models'],
+        qa_analyzer_models=conf['qa_analyzer_models'],
+        audio_model_name=audio_model,
+        text_model_name=text_model,
+        evals=conf.get('evals', 3),
+        verbose=conf.get('verbose', 1)
+    )
+    return processor
