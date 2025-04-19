@@ -18,4 +18,4 @@ configs:
         model_name: "j-hartmann/emotion-english-distilroberta-base"
       video:
         enabled: false
-        model_name: null
+        model_name: "vit" #"trpakov/vit-face-expression"

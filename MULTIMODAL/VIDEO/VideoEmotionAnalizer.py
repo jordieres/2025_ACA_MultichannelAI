@@ -8,7 +8,7 @@ from PIL import Image
 from abc import ABC, abstractmethod
 from facenet_pytorch import MTCNN
 from transformers import AutoFeatureExtractor, AutoModelForImageClassification, AutoConfig
-from moviepy.video.io.VideoFileClip import VideoFileClip
+# from moviepy.video.io.VideoFileClip import VideoFileClip
 from fer import FER
 from emotiefflib.facial_analysis import EmotiEffLibRecognizer
 from dataclasses import dataclass, field
@@ -210,10 +210,10 @@ class VideoProcessor:
         Returns:
             list: A reduced list of frames based on the 'skips' parameter.
         """
-        clip = VideoFileClip(video_path)
-        video = clip.without_audio()
-        video_data = np.array(list(video.iter_frames()))
-        return self.reduce_video_frames(video_data)
+        # clip = VideoFileClip(video_path)
+        # video = clip.without_audio()
+        # video_data = np.array(list(video.iter_frames()))
+        # return self.reduce_video_frames(video_data)
 
     def reduce_video_frames(self, video_data: list):
         """
