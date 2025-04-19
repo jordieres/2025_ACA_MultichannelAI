@@ -10,6 +10,7 @@ from .MultiModalEmbeddings import MultimodalEmbeddings
 
 from MULTIMODAL.AUDIO.AudioEmotionAnalzer import AudioEmotionAnalysis
 from MULTIMODAL.TEXT.Analyze.TextEmotionAnalyzer import TextEmotionAnalyzer
+from MULTIMODAL.VIDEO.VideoEmotionAnalizer import VideoEmotionAnalysis
 
 
 @dataclass
@@ -18,6 +19,7 @@ class EnsembleInterventionAnalyzer:
     qa_analyzer_models: List[str]
     audio_model_name: Optional[str] = None
     text_model_name: Optional[str] = None
+    video_model_name: Optional[str] = None
     NUM_EVALUATIONS: int = 5
     verbose: int = 1
 
@@ -30,9 +32,10 @@ class EnsembleInterventionAnalyzer:
             QAAnalyzer(model_name=name, NUM_EVALUATIONS=self.NUM_EVALUATIONS)
             for name in self.qa_analyzer_models]
         
-        self.coherence_analyzer = CoherenceAnalyzer(model_name=self.qa_analyzer_models[0])
+        self.coherence_analyzer = CoherenceAnalyzer(model_name=self.qa_analyzer_models[0]) # Todo: implementar variabilidad intrinseca y extrinseca  
         self.audio_emotion_analyzer = AudioEmotionAnalysis(model_name=self.audio_model_name) if self.audio_model_name else None
         self.text_emotion_analyzer = TextEmotionAnalyzer(model_name=self.text_model_name) if self.text_model_name else None
+        self.video_emmotion_analyzer = VideoEmotionAnalysis(model_name=self.video_model_name) if self.video_model_name else None
 
     def ensemble_qa_analysis(self, question: str, answer: str):
         results = []  # (cat, conf, model_name, raw_outputs)
@@ -128,7 +131,8 @@ class EnsembleInterventionAnalyzer:
             path_json=path_json,
             audio_file_path=path_audio,
             audio_emotion_analyzer=self.audio_emotion_analyzer,
-            text_emotion_analyzer=self.text_emotion_analyzer
+            text_emotion_analyzer=self.text_emotion_analyzer,
+            video_emmotion_analyzer=self.video_emmotion_analyzer
         )
 
         self._print("[INFO] Multimodal model initialized")
@@ -235,8 +239,14 @@ class EnsembleInterventionAnalyzer:
         else:
             text = None
 
+        if self.video_emmotion_analyzer is not None:
+            video = df_subset["video_embedding"].tolist()
+        else:
+            video = None
+
         return {
             "num_sentences": num_sent if (audio or text) else None,
             "audio": audio,
-            "text": text
+            "text": text,
+            "video": video
         }

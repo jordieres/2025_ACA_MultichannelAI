@@ -394,3 +394,6 @@ class VideoEmotionAnalysis:
             elif prediction == "fear":
                 return "disgust"
         return prediction
+    
+    def get_embeddings(self, video):
+        pass

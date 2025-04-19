@@ -19,6 +19,7 @@ np._no_nep50_warning = getattr(np, '_no_nep50_warning', dummy_npwarn_decorator_f
 
 from MULTIMODAL.AUDIO.AudioEmotionAnalzer import AudioEmotionAnalysis
 from MULTIMODAL.TEXT.Analyze.TextEmotionAnalyzer import TextEmotionAnalyzer
+from MULTIMODAL.VIDEO.VideoEmotionAnalizer import VideoEmotionAnalysis
 
 @dataclass
 class MultimodalEmbeddings:
@@ -27,6 +28,7 @@ class MultimodalEmbeddings:
     audio_file_path: str
     audio_emotion_analyzer: Optional[AudioEmotionAnalysis] = None
     text_emotion_analyzer: Optional[TextEmotionAnalyzer] = None
+    video_emmotion_analyzer: Optional[VideoEmotionAnalysis] = None
     
 
     def __post_init__(self):
@@ -121,6 +123,8 @@ class MultimodalEmbeddings:
             print(f"Error al procesar el archivo: {e}")
             return None
         
+    def cortar_video_temporal(self, start_time: int, end_time: int):
+        pass
     
     # def generar_embeddings(self) -> pd.DataFrame:
     #     audio_embs = []
@@ -139,13 +143,14 @@ class MultimodalEmbeddings:
     def generar_embeddings(self) -> pd.DataFrame:
         audio_embs = []
         text_embs = []
+        video_embs = []
 
         for _, row in self.sentences_df.iterrows():
             # === Audio Embeddings ===
             if self.audio_emotion_analyzer is not None:
-                temp_file = self.cortar_audio_temporal(row['start_time'], row['end_time'])
-                if temp_file is not None:
-                    audio_emb = self.audio_emotion_analyzer.get_embeddings(temp_file.name)
+                audio_temp_file = self.cortar_audio_temporal(row['start_time'], row['end_time'])
+                if audio_temp_file is not None:
+                    audio_emb = self.audio_emotion_analyzer.get_embeddings(audio_temp_file.name)
                     audio_embs.append(audio_emb.tolist() if hasattr(audio_emb, 'tolist') else audio_emb)
                 else:
                     audio_embs.append(None)
@@ -159,6 +164,17 @@ class MultimodalEmbeddings:
             else:
                 text_embs.append(None)
 
+             # === Video Embeddings ===
+            if self.video_emmotion_analyzer is not None:
+                video_temp_file = self.cortar_video_temporal(row['start_time'], row['end_time'])
+                if video_temp_file is not None:
+                    video_emb = self.video_emmotion_analyzer.get_embeddings(video_temp_file.name)
+                    video_embs.append(video_emb.tolist() if hasattr(video_emb, 'tolist') else video_emb)
+                else:
+                    video_embs.append(None)
+            else:
+                video_embs.append(None)
+
         # Asignación de columnas
         if self.audio_emotion_analyzer is not None:
             self.sentences_df["audio_embedding"] = audio_embs
@@ -169,5 +185,10 @@ class MultimodalEmbeddings:
             self.sentences_df["text_embedding"] = text_embs
         else:
             self.sentences_df["text_embedding"] = [None] * len(self.sentences_df)
+
+        if self.video_emmotion_analyzer is not None:
+            self.sentences_df["video_embedding"] = video_embs
+        else:
+            self.sentences_df["video_embedding"] = [None] * len(self.sentences_df)
 
         return self.sentences_df
