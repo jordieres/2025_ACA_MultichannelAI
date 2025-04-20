@@ -53,7 +53,7 @@ class EnsembleInterventionAnalyzer:
                 "Predicted_category": cat,
                 "Confidence": round(conf, 2)
             }
-            self._print(f"[{analyzer.model}] Predicted: {cat} | Confidence: {conf:.1f}%")
+            self._print(f"[{analyzer.model_name}] Predicted: {cat} | Confidence: {conf:.1f}%")
 
         if not results:
             return None, 0.0, model_confidences, {}
