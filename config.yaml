@@ -1,7 +1,7 @@
 configs:
   sample:
     input_csv_path: "/home/aacastro/2025_ACA_MultichannelAI/MULTIMODAL/SAMPLE_DATA.csv"
-    evals: 3
+    evals: 5
     verbose: 1
 
     qa_models: ["llama3:8b", "gemma2:9b", "phi4"]
@@ -22,8 +22,8 @@ configs:
 
   full:
     input_csv_path: "/home/aacastro/2025_ACA_MultichannelAI/MULTIMODAL/OK_DATA.csv"
-    evals: 3
-    verbose: 1
+    evals: 5
+    verbose: 0
 
     qa_models: ["llama3:8b", "gemma2:9b", "phi4"]
     monologue_models: ["llama3:8b", "llama3.1:8b", "deepseek-r1:14b"]
