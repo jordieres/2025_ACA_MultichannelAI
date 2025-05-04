@@ -47,7 +47,7 @@ class MultimodalEmbeddings:
         for speaker in data_json.get("speakers", []):
             words = speaker.get("words", [])
             times = speaker.get("start_times", [])
-            speaker_name = speaker.get("speaker_info", {}).get("name", "")
+            speaker_name = ((speaker or {}).get("speaker_info") or {}).get("name", "")
 
             frase = ""
             tiempos = []
