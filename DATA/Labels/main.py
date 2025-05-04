@@ -2,12 +2,7 @@ import pandas as pd
 from event import Event
 
 # Carga del DataFrame de conferencias (ejemplo)
-# conf_df = pd.read_csv('datos_conferencias.csv')  # columnas: timestamp, symbol
-df_conferences = pd.read_csv('/home/aacastro/Alejandro/ACA_MultichanelAI_2025/2025_ACA_MultichannelAI/DATA/Labels/conference_data.csv', index_col=0)    
-# conf_df = df_conferences.iloc[[1, 15]]
-# conf_df = df_conferences.head(5)
-# conf_df = df_conferences[df_conferences['symbol'] == 'AMZN']
-# conf_df
+df_conferences = pd.read_csv('conference_data.csv', index_col=0)    
 
 event_summaries = []
 
