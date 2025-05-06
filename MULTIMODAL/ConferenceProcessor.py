@@ -5,6 +5,7 @@ import pandas as pd
 import json
 import yaml
 import time
+import torch
 import os
 
 from MULTIMODAL.TEXT.Analyze.EnsembleInterventionAnalyzer import EnsembleInterventionAnalyzer
@@ -22,6 +23,7 @@ class ConferenceProcessor:
     text_model_name: Optional[str] = None
     video_model_name: Optional[str] = None
     evals: int = 3
+    device: str = 'cuda' if torch.cuda.is_available() else 'cpu'
     verbose: int = 1
 
     def __post_init__(self):
@@ -39,6 +41,7 @@ class ConferenceProcessor:
             audio_model_name=self.audio_model_name,
             text_model_name=self.text_model_name,
             NUM_EVALUATIONS=self.evals,
+            device=self.device,
             verbose=self.verbose
         )
 
@@ -110,8 +113,7 @@ def load_config(config_path: str, config_name: str = "default") -> ConferencePro
     # Verifica si se deben usar los modelos de audio y texto
     audio_model = conf['embeddings']['audio']['model_name'] if conf['embeddings']['audio']['enabled'] else None
     text_model = conf['embeddings']['text']['model_name'] if conf['embeddings']['text']['enabled'] else None
-    # Video aún no integrado, pero puedes extraerlo igual:
-    # video_model = conf['embeddings']['video']['model_name'] if conf['embeddings']['video']['enabled'] else None
+    video_model = conf['embeddings']['video']['model_name'] if conf['embeddings']['video']['enabled'] else None
 
     processor = ConferenceProcessor(
         input_csv_path=conf['input_csv_path'],
@@ -121,7 +123,9 @@ def load_config(config_path: str, config_name: str = "default") -> ConferencePro
         qa_analyzer_models=conf['qa_analyzer_models'],
         audio_model_name=audio_model,
         text_model_name=text_model,
+        video_model_name=video_model,
         evals=conf.get('evals', 3),
+        device=conf.get('device', 'cuda' if torch.cuda.is_available() else 'cpu'),
         verbose=conf.get('verbose', 1)
     )
     return processor

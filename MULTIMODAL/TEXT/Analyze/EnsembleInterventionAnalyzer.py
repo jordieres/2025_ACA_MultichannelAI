@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Optional
 import random
+import torch
 import os
 
 from .InterventionAnalyzer import InterventionAnalyzer
@@ -21,6 +22,7 @@ class EnsembleInterventionAnalyzer:
     text_model_name: Optional[str] = None
     video_model_name: Optional[str] = None
     NUM_EVALUATIONS: int = 5
+    device: str = 'cuda' if torch.cuda.is_available() else 'cpu'
     verbose: int = 1
 
     def __post_init__(self):
@@ -33,9 +35,9 @@ class EnsembleInterventionAnalyzer:
             for name in self.qa_analyzer_models]
         
         self.coherence_analyzer = CoherenceAnalyzer(model_name=self.qa_analyzer_models[0]) # Todo: implementar variabilidad intrinseca y extrinseca  
-        self.audio_emotion_analyzer = AudioEmotionAnalysis(model_name=self.audio_model_name) if self.audio_model_name else None
-        self.text_emotion_analyzer = TextEmotionAnalyzer(model_name=self.text_model_name) if self.text_model_name else None
-        self.video_emmotion_analyzer = VideoEmotionAnalysis(mode=self.video_model_name) if self.video_model_name else None
+        self.audio_emotion_analyzer = AudioEmotionAnalysis(model_name=self.audio_model_name, device=self.device) if self.audio_model_name else None
+        self.text_emotion_analyzer = TextEmotionAnalyzer(model_name=self.text_model_name, device=self.device) if self.text_model_name else None
+        self.video_emmotion_analyzer = VideoEmotionAnalysis(mode=self.video_model_name, device=self.device) if self.video_model_name else None
 
     def ensemble_qa_analysis(self, question: str, answer: str):
         results = []  # (cat, conf, model_name, raw_outputs)
