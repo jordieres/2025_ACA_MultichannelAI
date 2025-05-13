@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 
-from anytree import RenderTree
+from anytree import RenderTree, PreOrderIter
 
-from ConferenceNode import ConferenceNode
+from .ConferenceNode import ConferenceNode
 
 class ConferenceTreeVisualizer:
     def __init__(self, root: ConferenceNode):

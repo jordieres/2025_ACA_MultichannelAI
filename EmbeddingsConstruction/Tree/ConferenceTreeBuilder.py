@@ -1,7 +1,7 @@
 import json
 import re
 
-from ConferenceNode import ConferenceNode
+from .ConferenceNode import ConferenceNode
 
 class ConferenceTreeBuilder:
     def __init__(self, json_path: str):
