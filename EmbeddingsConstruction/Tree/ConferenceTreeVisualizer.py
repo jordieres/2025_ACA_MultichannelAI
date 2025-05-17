@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 from anytree import RenderTree, PreOrderIter
-
 from .ConferenceNode import ConferenceNode
 
 class ConferenceTreeVisualizer:
@@ -10,7 +9,7 @@ class ConferenceTreeVisualizer:
         self.root = root
 
     def show_text_tree(self):
-        print("\n📂 Estructura del árbol de la conferencia:\n")
+        print("\n📂 Conference Tree Structure:\n")
         for pre, _, node in RenderTree(self.root):
             print(f"{pre}{node.name} ({node.node_type})")
 
@@ -39,17 +38,26 @@ class ConferenceTreeVisualizer:
         pos = hierarchy_pos(G, self.root.name)
 
         plt.figure(figsize=(20, 8))
-        nx.draw(G, pos, with_labels=False, arrows=True,
-                node_size=2000, node_color='lightblue', edge_color='gray')
+        nx.draw(
+            G, pos,
+            with_labels=False,
+            arrows=True,
+            node_size=2000,
+            node_color='lightblue',
+            edge_color='gray'
+        )
 
         for node_name, (x, y) in pos.items():
-            plt.text(x, y, node_name,
-                     rotation=label_angle,
-                     horizontalalignment='center',
-                     verticalalignment='center',
-                     fontsize=9, fontweight='bold')
+            plt.text(
+                x, y, node_name,
+                rotation=label_angle,
+                horizontalalignment='center',
+                verticalalignment='center',
+                fontsize=9,
+                fontweight='bold'
+            )
 
-        plt.title("🌲 Árbol de la Conferencia (NetworkX)", fontsize=14)
+        # plt.title("Conference Tree Structure", fontsize=14)
         plt.axis('off')
         plt.tight_layout()
         plt.show()

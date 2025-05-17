@@ -39,6 +39,9 @@ class FeatureExtractor:
         else:
             return np.zeros((n_target, 7))
 
+        if arr.ndim == 1:  # <--- AÑADIR ESTA COMPROBACIÓN
+            arr = arr.reshape(0, 7)
+
         if arr.shape[0] < n_target:
             pad = np.zeros((n_target - arr.shape[0], 7))
             arr = np.vstack([arr, pad])
@@ -68,7 +71,7 @@ class FeatureExtractor:
         if 'qa_response' in node.metadata:
             qa = node.metadata['qa_response']
             meta.append(float(qa.get("Confidence", 0)))
-            meta.extend(self.to_onehot(qa.get("Predicted_category", "").lower(), self.qa_categories))
+            meta.extend(self.to_onehot(str(qa.get("Predicted_category", "")).lower(), self.qa_categories))
 
         if 'coherence' in node.metadata:
             for coh in node.metadata['coherence'][:self.max_num_coherences]:
