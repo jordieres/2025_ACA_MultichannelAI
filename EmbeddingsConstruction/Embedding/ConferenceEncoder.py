@@ -49,45 +49,45 @@ class ConferenceEncoder(nn.Module):
             self.load_state_dict(torch.load(weights_path, map_location=device))
             print(f"✅ Pesos cargados desde: {weights_path}")
 
-    def forward(self, node_embeddings: torch.Tensor, return_attn=False):
-        """
-        node_embeddings: [n_nodes, input_dim]
-        """
-        n_nodes = node_embeddings.size(0)
-
-        # Preparar token [CLS]
-        cls = self.cls_token.expand(1, -1, -1)  # [1, 1, input_dim]
-        input_seq = torch.cat([cls, node_embeddings.unsqueeze(0)], dim=1)  # [1, n+1, input_dim]
-
-        # Codificación posicional (incluye posición 0 para [CLS])
-        pos_ids = torch.arange(n_nodes + 1, device=input_seq.device).unsqueeze(0)  # [1, n+1]
-        pos_emb = self.pos_embedding(pos_ids)  # [1, n+1, input_dim]
-        input_seq = input_seq + pos_emb  # [1, n+1, input_dim]
-
-        # Transformer encoder
-        out = self.encoder_layer(input_seq)  # [1, n+1, input_dim]
-
-        if return_attn:
-            attn_weights = self.encoder_layer.attn_weights  # [1, n_heads, T, T]
-            attn_from_cls = attn_weights[0, 0, 0, 1:].detach().cpu().numpy()  # [n_nodes]
-            return self.proj(out[:, 0, :]), attn_from_cls  # [1, d_output], [n_nodes]
-
-        return self.proj(out[:, 0, :])  # [d_output]
-
     # def forward(self, node_embeddings: torch.Tensor, return_attn=False):
     #     """
-    #     node_embeddings: [batch_size, n_nodes, input_dim]
+    #     node_embeddings: [n_nodes, input_dim]
     #     """
-    #     B, N, D = node_embeddings.shape  # batch size, num_nodes, input_dim
+    #     n_nodes = node_embeddings.size(0)
 
-    #     cls = self.cls_token.expand(B, 1, -1)  # [B, 1, input_dim]
-    #     input_seq = torch.cat([cls, node_embeddings], dim=1)  # [B, N+1, input_dim]
+    #     # Preparar token [CLS]
+    #     cls = self.cls_token.expand(1, -1, -1)  # [1, 1, input_dim]
+    #     input_seq = torch.cat([cls, node_embeddings.unsqueeze(0)], dim=1)  # [1, n+1, input_dim]
 
-    #     out = self.encoder_layer(input_seq)  # [B, N+1, input_dim]
+    #     # Codificación posicional (incluye posición 0 para [CLS])
+    #     pos_ids = torch.arange(n_nodes + 1, device=input_seq.device).unsqueeze(0)  # [1, n+1]
+    #     pos_emb = self.pos_embedding(pos_ids)  # [1, n+1, input_dim]
+    #     input_seq = input_seq + pos_emb  # [1, n+1, input_dim]
+
+    #     # Transformer encoder
+    #     out = self.encoder_layer(input_seq)  # [1, n+1, input_dim]
 
     #     if return_attn:
-    #         attn_weights = self.encoder_layer.attn_weights  # [B, n_heads, T, T]
-    #         attn_from_cls = attn_weights[:, 0, 0, 1:].detach().cpu().numpy()  # [B, N]
-    #         return self.proj(out[:, 0, :]), attn_from_cls  # [B, d_output], [B, N]
+    #         attn_weights = self.encoder_layer.attn_weights  # [1, n_heads, T, T]
+    #         attn_from_cls = attn_weights[0, 0, 0, 1:].detach().cpu().numpy()  # [n_nodes]
+    #         return self.proj(out[:, 0, :]), attn_from_cls  # [1, d_output], [n_nodes]
 
-    #     return self.proj(out[:, 0, :])  # [B, d_output]
+    #     return self.proj(out[:, 0, :])  # [d_output]
+
+    def forward(self, node_embeddings: torch.Tensor, return_attn=False):
+        """
+        node_embeddings: [batch_size, n_nodes, input_dim]
+        """
+        B, N, D = node_embeddings.shape  # batch size, num_nodes, input_dim
+
+        cls = self.cls_token.expand(B, 1, -1)  # [B, 1, input_dim]
+        input_seq = torch.cat([cls, node_embeddings], dim=1)  # [B, N+1, input_dim]
+
+        out = self.encoder_layer(input_seq)  # [B, N+1, input_dim]
+
+        if return_attn:
+            attn_weights = self.encoder_layer.attn_weights  # [B, n_heads, T, T]
+            attn_from_cls = attn_weights[:, 0, 0, 1:].detach().cpu().numpy()  # [B, N]
+            return self.proj(out[:, 0, :]), attn_from_cls  # [B, d_output], [B, N]
+
+        return self.proj(out[:, 0, :])  # [B, d_output]
