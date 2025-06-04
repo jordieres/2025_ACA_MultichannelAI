@@ -102,7 +102,7 @@ class ConferenceEncoderTrainer:
         print(f"🏆 Mejores hiperparámetros: {self.best_params}")
         return self.best_params
 
-    def train_final(self):
+    def train(self):
         if not self.best_params:
             raise RuntimeError("Primero debes llamar a optimize().")
 

@@ -98,7 +98,7 @@ class NodeEncoderTrainer:
             raise RuntimeError("Call optimize() before train_final().")
 
         # Prepare data loader
-        dataset = ConferenceContrastiveDataset(self.json_paths)
+        dataset = NodeContrastiveDataset(self.json_paths)
         loader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True, drop_last=True)
 
         # Initialize model with best params
