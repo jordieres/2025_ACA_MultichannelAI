@@ -10,6 +10,7 @@ class NodeEncoder(nn.Module):
                  hidden_dim=128,          # Atención por frase
                  meta_dim=32,             # Proyección de metadatos
                  d_output=512,            # Embedding final
+                 n_heads=4,
                  categories_10k=None,
                  qa_categories=None,
                  weights_path="weights/node_encoder.pt"
@@ -26,7 +27,7 @@ class NodeEncoder(nn.Module):
 
 
         # Encoder de frases con atención
-        self.frase_encoder = SentenceAttentionEncoder(input_dim=input_dim, hidden_dim=hidden_dim)
+        self.frase_encoder = SentenceAttentionEncoder(input_dim=input_dim, hidden_dim=hidden_dim, n_heads=n_heads)
         
         if weights_path:
             self.frase_encoder.load_state_dict(torch.load(weights_path))
