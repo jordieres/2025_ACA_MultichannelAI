@@ -1,11 +1,11 @@
 conferences_data_adquisition:
   api_key: '****' # Replace with your actual API key
-  base_path: './Multimodal-AI-in-Finance/data/downloads' # Path where the folder with downloaded files structure will be generated
+  base_path: './data/downloads' # Path where the folder with downloaded files structure will be generated
   url: 'https://earningscall.biz/sp-500-holdings' # URL to know the S&P500 entities
 
 conferences_processing:
   default:
-    input_csv_path: ./Multimodal-AI-in-Finance/data/paths.csv
+    input_csv_path: ./data/paths.csv
     qa_models:
       - llama3:8b
       - gemma2:9b
@@ -44,11 +44,11 @@ embeddings_pipeline:
       meta_dim: 32
       n_heads: 8
       d_output: 512
-      weights_path: "/home/aacastro/2025_ACA_MultichannelAI/weights/node_encoder_best.pt"
+      weights_path: "./weights/node_encoder_best.pt"
     conference_encoder:
       hidden_dim: 256
       input_dim: 512
       n_heads: 4
       d_output: 512
-      weights_path: "/home/aacastro/2025_ACA_MultichannelAI/weights/conference_encoder_best.pt"
+      weights_path: "./weights/conference_encoder_best.pt"
     device: cuda
