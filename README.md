@@ -22,6 +22,10 @@ Este proyecto implementa un pipeline para analizar conferencias financieras mezc
 - Orquesta todo el flujo para cada conferencia: preprocesado, extracción de embeddings y enriquecimiento.
 - Lee las rutas de un CSV y deja los resultados procesados en una carpeta `processed`.
 
+### Emotions detection
+- Ubicación: `src/multimodal_fin/emotions`
+- Tiene como objetivo extraer los embeddinsg emocionales en los 3 canales para cada frase en intervenciones relevantes.
+
 ### Embeddings Pipeline
 - Ubicación: `src/multimodal_fin/embeddings`
 - Permite crear representaciones vectoriales a partir del JSON enriquecido. Incluye modelos de nodos y de conferencias (`NodeEncoder` y `ConferenceEncoder`).
