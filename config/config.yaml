@@ -1,0 +1,48 @@
+conferences_processing:
+  default:
+    input_csv_path: /home/aacastro/Multimodal-AI-in-Finance/data/paths.csv
+    qa_models:
+      - llama3:8b
+      - gemma2:9b
+      - phi4
+    monologue_models:
+      - llama3:8b
+      - llama3.1:8b
+      - deepseek-r1:14b
+    sec10k_models:
+      - qwen2:7b
+      - gemma2:9b
+      - qwen2.5:7b
+    qa_analyzer_models:
+      - llama3:8b
+      - gemma2:9b
+      - phi4
+    embeddings:
+      audio:
+        enabled: true
+        model_name: "iic/emotion2vec_plus_seed"
+      text:
+        enabled: true
+        model_name: "j-hartmann/emotion-english-distilroberta-base"
+      video:
+        enabled: false
+        model_name: vit  # "trpakov/vit-face-expression"
+    evals: 3
+    device: cuda
+    verbose: 1
+
+
+embeddings_pipeline:
+  default:
+    node_encoder:
+      hidden_dim: 128
+      meta_dim: 32
+      n_heads: 8
+      d_output: 512
+      weights_path: "/home/aacastro/Multimodal-AI-in-Finance/weights/node_encoder_best.pt"
+    conference_encoder:
+      hidden_dim: 256
+      input_dim: 512
+      n_heads: 4
+      d_output: 512
+      weights_path: "/home/aacastro/Multimodal-AI-in-Finance/weights/conference_encoder_best.pt"
