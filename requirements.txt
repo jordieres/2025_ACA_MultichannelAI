@@ -7,7 +7,9 @@ anyio==4.9.0
 anytree==2.13.0
 asttokens==3.0.0
 astunparse==1.6.3
+attrs==25.3.0
 audioread==3.0.1
+cattrs==25.1.1
 certifi==2025.1.31
 cffi==1.17.1
 charset-normalizer==3.4.1
@@ -18,8 +20,10 @@ contourpy==1.3.1
 crcmod==1.7
 cryptography==44.0.2
 cycler==0.12.1
+dataclasses-json==0.6.7
 debugpy==1.8.13
 decorator==5.2.1
+earningscall==1.2.1
 editdistance==0.8.1
 einops==0.8.1
 emotiefflib==1.0
@@ -67,6 +71,7 @@ llvmlite==0.44.0
 Markdown==3.8
 markdown-it-py==3.0.0
 MarkupSafe==3.0.2
+marshmallow==3.26.1
 matplotlib==3.10.1
 matplotlib-inline==0.1.7
 mdurl==0.1.2
@@ -76,6 +81,8 @@ more-itertools==10.6.0
 moviepy==2.2.1
 mpmath==1.3.0
 msgpack==1.1.0
+-e git+https://github.com/jordieres/2025_ACA_MultichannelAI@f782eace5e8cd742043ca269d6ce8ed895a81910#egg=multimodal_fin
+mypy_extensions==1.1.0
 namex==0.1.0
 narwhals==1.42.1
 nest-asyncio==1.6.0
@@ -136,6 +143,7 @@ PyYAML==6.0.2
 pyzmq==26.3.0
 regex==2024.11.6
 requests==2.32.3
+requests-cache==1.2.1
 rich==14.0.0
 rotary-embedding-torch==0.8.6
 safetensors==0.5.3
@@ -170,10 +178,12 @@ traitlets==5.14.3
 transformers==4.50.3
 triton==3.2.0
 typer==0.16.0
+typing-inspect==0.9.0
 typing-inspection==0.4.0
 typing_extensions==4.13.0
 tzdata==2025.2
 umap-learn==0.5.7
+url-normalize==2.2.1
 urllib3==2.3.0
 wcwidth==0.2.13
 Werkzeug==3.1.3
