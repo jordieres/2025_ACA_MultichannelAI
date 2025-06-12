@@ -1,81 +1,81 @@
 # Multimodal AI in Finance
 
-Este proyecto implementa un pipeline para analizar conferencias financieras mezclando procesamiento de texto, audio y video. El código principal se encuentra en `src/multimodal_fin` y está organizado en varios módulos.
+This project implements a pipeline to analyze financial conferences by combining text, audio, and video processing. The main code is located in `src/multimodal_fin` and is organized into several modules.
 
-## Componentes principales
+## Main Components
 
 ### Preprocessor
-- Ubicación: `src/multimodal_fin/processors/Preprocessor.py`
-- Divide la transcripción en secciones de "prepared remarks" y "q_a".
-- Clasifica cada intervención usando un ensamble de modelos (`EnsembleInterventionClassifier`).
-- Anota pares pregunta‑respuesta.
-- Guarda el resultado como CSV.
+- Location: `src/multimodal_fin/processors/Preprocessor.py`
+- Splits the transcript into "prepared remarks" and "q_a" sections.
+- Classifies each intervention using an ensemble of models (`EnsembleInterventionClassifier`).
+- Annotates question–answer pairs.
+- Saves the result as a CSV file.
 
 ### MultimodalProcessor
-- Ubicación: `src/multimodal_fin/processors/MultiModalProcessor.py`
-- Extrae embeddings de audio, texto y video a través de `EmbeddingsExtractor`.
-- Enriquecce esos embeddings con información obtenida de LLMs mediante `MetadataEnricher` (clasificación de temas, análisis de QA y coherencia).
-- Genera un archivo JSON con toda la metadata.
+- Location: `src/multimodal_fin/processors/MultiModalProcessor.py`
+- Extracts audio, text, and video embeddings through `EmbeddingsExtractor`.
+- Enriches these embeddings with information obtained from LLMs via `MetadataEnricher` (topic classification, QA analysis, coherence).
+- Generates a JSON file with all metadata.
 
 ### ConferenceProcessor
-- Ubicación: `src/multimodal_fin/processors/conference.py`
-- Orquesta todo el flujo para cada conferencia: preprocesado, extracción de embeddings y enriquecimiento.
-- Lee las rutas de un CSV y deja los resultados procesados en una carpeta `processed`.
+- Location: `src/multimodal_fin/processors/conference.py`
+- Orchestrates the full pipeline for each conference: preprocessing, embedding extraction, and enrichment.
+- Reads the paths from a CSV and saves the processed results in a `processed` folder.
 
-### Emotions detection
-- Ubicación: `src/multimodal_fin/emotions`
-- Tiene como objetivo extraer los embeddinsg emocionales en los 3 canales para cada frase en intervenciones relevantes.
+### Emotions Detection
+- Location: `src/multimodal_fin/emotions`
+- Aims to extract emotional embeddings from the 3 channels for each sentence in relevant interventions.
 
 ### Embeddings Pipeline
-- Ubicación: `src/multimodal_fin/embeddings`
-- Permite crear representaciones vectoriales a partir del JSON enriquecido. Incluye modelos de nodos y de conferencias (`NodeEncoder` y `ConferenceEncoder`).
+- Location: `src/multimodal_fin/embeddings`
+- Enables the creation of vector representations from the enriched JSON. Includes node-level and conference-level models (`NodeEncoder` and `ConferenceEncoder`).
 
 ### CLI
-- Ubicación: `src/multimodal_fin/cli.py`
-- Expone dos comandos con [Typer](https://typer.tiangolo.com/):
-  - `process`: ejecuta el pipeline completo (texto y multimodal) a partir de un archivo de configuración YAML.
-  - `embed`: genera embeddings de un JSON previamente enriquecido.
+- Location: `src/multimodal_fin/cli.py`
+- Exposes two commands using [Typer](https://typer.tiangolo.com/):
+  - `process`: runs the full pipeline (textual and multimodal) based on a YAML configuration file.
+  - `embed`: generates embeddings from a previously enriched JSON.
 
-## Configuración
-El archivo `config/config.yaml` contiene un ejemplo de configuración. Cada sección bajo `conferences_processing` define:
-- Rutas de entrada (`input_csv_path`).
-- Listas de modelos para las distintas tareas (QA, monólogo, sec10k, etc.).
-- Parámetros de configuración de los dos transformers para la extracción de embeddings.
+## Configuration
+The file `config/config.yaml` contains an example configuration. Each section under `conferences_processing` defines:
+- Input paths (`input_csv_path`).
+- Lists of models for different tasks (QA, monologue, sec10k, etc.).
+- Configuration parameters for the two transformers used for embedding extraction.
 
-También puede incluir un bloque `embeddings_pipeline` para los parámetros de los encoders cuando se utilizan los comandos de generación de embeddings.
+It can also include an `embeddings_pipeline` block for encoder parameters when using the embedding generation commands.
 
-## Cómo usar el sistema
+## How to Use the System
 
-1. **Instalación**: Ejecutar desde el directorio raíz del proyecto:
+1. **Installation**: Run from the project root directory:
    ```bash
    cd 2025_ACA_MultichannelAI/
    pip install -e .
    ```
 
-2. **Preparar las conferencias**: crear un CSV con la ruta de cada conferencia (similar a `data/paths.csv`). Cada carpeta debe contener `transcript.csv` (derivado de `LEVEL_3.json` que contiene las intervenciones una a una con timestamps), `LEVEL_4.json` (que marca la separación entre introducción y ronda de preguntas-respuestas) y los archivos multimedia.
+2. **Prepare the Conferences**: Create a CSV with the path to each conference (similar to `data/paths.csv`). Each folder must contain `transcript.csv` (derived from `LEVEL_3.json`, which contains interventions one by one with timestamps), `LEVEL_4.json` (which marks the separation between introduction and Q&A session), and the multimedia files.
 
-3. **Ejecutar el pipeline**: Esto incluye clasificación textual, análisis multimodal y generación del JSON enriquecido.
+3. **Run the Pipeline**: This includes textual classification, multimodal analysis, and generation of the enriched JSON.
    ```bash
    multimodal-fin process --config-file config/config.yaml --config-name default
    ```
-   Esto produce un CSV y un JSON enriquecido dentro de una carpeta `processed` al lado de cada conferencia.
+   This will produce a CSV and an enriched JSON inside a `processed` folder next to each conference.
 
-4. **Generar embeddings**: Para este paso será necesario proporcionar unos pesos entrenados de la arquitectura propuesta. Ver `notebooks/train_encoders.ipynb`
+4. **Generate Embeddings**: For this step, pretrained weights of the proposed architecture are required. See `notebooks/train_encoders.ipynb`.
    
-   Para un único archivo:
+   For a single file:
    ```bash
    multimodal-fin embed   --config-file config/config.yaml   --config-name default  --json-path /ruta/a/transcript.json
    ```
 
-   Para varios archivos habrá que meter los path de los transcript.json en un csv con una única columna 'Paths'.
+   For multiple files, create a CSV with a single column called `Paths` containing the paths to each `transcript.json`:
    ```bash
    multimodal-fin embed   --config-file config/config.yaml   --config-name default  --json-csv data/json_paths.csv
    ```
 
-## Resultados esperados
-Al finalizar se obtienen:
-- Un CSV con las intervenciones clasificadas y anotadas.
-- Un JSON con embeddings multimodales y metadata (clasificación temática, análisis de coherencia, etc.).
-- Si se usa el pipeline de embeddings, vectores que representan la conferencia completa para tareas de aprendizaje automático.
+## Expected Results
+At the end, you will obtain:
+- A CSV with classified and annotated interventions.
+- A JSON containing multimodal embeddings and metadata (topic classification, coherence analysis, etc.).
+- If the embeddings pipeline is used, vectors representing the entire conference for machine learning tasks.
 
-![Visualización de embeddings](static/final_embeddings.png)
+![Embeddings Visualization](static/final_embeddings.png)
