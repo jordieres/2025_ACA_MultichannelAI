@@ -44,6 +44,7 @@ También puede incluir un bloque `embeddings_pipeline` para los parámetros de l
 
 1. **Instalación**: Ejecutar desde el directorio raíz del proyecto:
    ```bash
+   cd 2025_ACA_MultichannelAI
    pip install -e .
    ```
 
@@ -73,3 +74,4 @@ Al finalizar se obtienen:
 - Un JSON con embeddings multimodales y metadata (clasificación temática, análisis de coherencia, etc.).
 - Si se usa el pipeline de embeddings, vectores que representan la conferencia completa para tareas de aprendizaje automático.
 
+![Visualización de embeddings](static/final_embeddings.png)
