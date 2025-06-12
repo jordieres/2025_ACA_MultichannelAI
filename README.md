@@ -52,15 +52,20 @@ It can also include an `embeddings_pipeline` block for encoder parameters when u
    pip install -e .
    ```
 
-2. **Prepare the Conferences**: Create a CSV with the path to each conference (similar to `data/paths.csv`). Each folder must contain `transcript.csv` (derived from `LEVEL_3.json`, which contains interventions one by one with timestamps), `LEVEL_4.json` (which marks the separation between introduction and Q&A session), and the multimedia files.
+2. **Download SP500 Conference Data**: This will download a subset of earnings call data (transcripts and audio) for companies in the S&P 500 and store them under   the folder specified in your config.
+   ```bash
+   multimodal-fin download --config-file config/config.yaml
+   ```
 
-3. **Run the Pipeline**: This includes textual classification, multimodal analysis, and generation of the enriched JSON.
+3. **Prepare the Conferences**: Create a CSV with the path to each conference (similar to `data/paths.csv`). Each folder must contain `transcript.csv` (derived from `LEVEL_3.json`, which contains interventions one by one with timestamps), `LEVEL_4.json` (which marks the separation between introduction and Q&A session), and the multimedia files.
+
+4. **Run the Pipeline**: This includes textual classification, multimodal analysis, and generation of the enriched JSON.
    ```bash
    multimodal-fin process --config-file config/config.yaml --config-name default
    ```
    This will produce a CSV and an enriched JSON inside a `processed` folder next to each conference.
 
-4. **Generate Embeddings**: For this step, pretrained weights of the proposed architecture are required. See `notebooks/train_encoders.ipynb`.
+5. **Generate Embeddings**: For this step, pretrained weights of the proposed architecture are required. See `notebooks/train_encoders.ipynb`.
    
    For a single file:
    ```bash
