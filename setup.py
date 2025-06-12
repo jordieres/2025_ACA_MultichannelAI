@@ -11,7 +11,7 @@ setup(
     install_requires=requirements,
     entry_points={
         "console_scripts": [
-            "multimodal-fin = multimodal_fin.cli:cli",
+            "multimodal-fin = multimodal_fin.cli:main",
         ],
     },
 )
