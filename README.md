@@ -33,6 +33,7 @@ This project implements a pipeline to analyze financial conferences by combining
 ### CLI
 - Location: `src/multimodal_fin/cli.py`
 - Exposes two commands using [Typer](https://typer.tiangolo.com/):
+  - `download`: downloads the necessary data from Earningscall API and organizes it into the appropiate folder structure and files format. 
   - `process`: runs the full pipeline (textual and multimodal) based on a YAML configuration file.
   - `embed`: generates embeddings from a previously enriched JSON.
 
