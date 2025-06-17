@@ -5,7 +5,7 @@ conferences_data_adquisition:
 
 conferences_processing:
   default:
-    input_csv_path: ./data/paths.csv
+    input_csv_path: /home/aacastro/2025_ACA_MultichannelAI/data/paths.csv
     qa_models:
       - llama3:8b
       - gemma2:9b
