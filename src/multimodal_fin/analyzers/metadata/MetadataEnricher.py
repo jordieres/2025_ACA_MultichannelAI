@@ -122,6 +122,7 @@ class MetadataEnricher:
                     'answer': self._get_multimodal_dict(a_group)
                 }
             }
+        return result
 
     def _classify_topics(self, text: str) -> Any:
         preds = [(clf.get_pred(text)[0], clf.get_pred(text)[1], clf.model)
