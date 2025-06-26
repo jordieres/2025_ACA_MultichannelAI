@@ -47,22 +47,23 @@ It can also include an `embeddings_pipeline` block for encoder parameters when u
 
 ## How to Use the System
 
-1. **Installation**: Run from the project root directory:
+1. **Installation**: First, create and activate a virtual environment (optional but recommended). Then, from the project root directory:
    ```bash
    cd 2025_ACA_MultichannelAI/
-   pip install -e .
+   pip install poetry
+   poetry install
    ```
 
 2. **Download SP500 Conference Data**: This will download a subset of earnings call data (transcripts and audio) for companies in the S&P 500 and store them under   the folder specified in your config.
    ```bash
-   multimodal-fin download --config-file config/config.yaml
+   poetry run multimodal-fin download --config-file config/config.yaml
    ```
 
 3. **Prepare the Conferences**: Create a CSV with the path to each conference (similar to `data/paths.csv`). Each folder must contain `transcript.csv` (derived from `LEVEL_3.json`, which contains interventions one by one with timestamps), `LEVEL_4.json` (which marks the separation between introduction and Q&A session), and the multimedia files.
 
 4. **Run the Pipeline**: This includes textual classification, multimodal analysis, and generation of the enriched JSON.
    ```bash
-   multimodal-fin process --config-file config/config.yaml --config-name default
+   poetry run multimodal-fin process --config-file config/config.yaml --config-name default
    ```
    This will produce a CSV and an enriched JSON inside a `processed` folder next to each conference.
 
@@ -70,12 +71,12 @@ It can also include an `embeddings_pipeline` block for encoder parameters when u
    
    For a single file:
    ```bash
-   multimodal-fin embed   --config-file config/config.yaml   --config-name default  --json-path /ruta/a/transcript.json
+   poetry run multimodal-fin embed   --config-file config/config.yaml   --config-name default  --json-path /ruta/a/transcript.json
    ```
 
    For multiple files, create a CSV with a single column called `Paths` containing the paths to each `transcript.json`:
    ```bash
-   multimodal-fin embed   --config-file config/config.yaml   --config-name default  --json-csv data/json_paths.csv
+   poetry run multimodal-fin embed   --config-file config/config.yaml   --config-name default  --json-csv data/json_paths.csv
    ```
 
 ## Expected Results
