@@ -52,3 +52,4 @@ embeddings_pipeline:
       d_output: 512
       weights_path: "./weights/conference_encoder_best.pt"
     device: cuda
+    
