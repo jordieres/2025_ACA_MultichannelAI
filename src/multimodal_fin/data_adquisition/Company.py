@@ -9,7 +9,7 @@ import os
 class CompanyDataAcquisition:
     def __init__(self, company_code: str):
         self.company_code = company_code.lower()
-        self.company = self._initialize_company()
+        self.company = self._initialize_company() 
 
     def _initialize_company(self) -> earningscall.company.Company:
         """
