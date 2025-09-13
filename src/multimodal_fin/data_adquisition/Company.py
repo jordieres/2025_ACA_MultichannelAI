@@ -1,121 +1,173 @@
-from datetime import datetime
-import pandas as pd
-import earningscall
-from earningscall import get_company
-from pathlib import Path
+"""Company-level data acquisition logic for transcripts and audio.
+
+Uses the `earningscall` library to retrieve and store financial conference data.
+"""
+
 import json
-import os
+from datetime import datetime
+from pathlib import Path
+from typing import Optional
+
+import pandas as pd
+from earningscall import get_company
+from earningscall.company import Company as EarningsCompany
+
+from multimodal_fin.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class CompanyDataAcquisition:
-    def __init__(self, company_code: str):
-        self.company_code = company_code.lower()
-        self.company = self._initialize_company() 
+    """Fetches and stores all available transcripts and audio for a given company."""
 
-    def _initialize_company(self) -> earningscall.company.Company:
+    def __init__(self, company_code: str):
         """
-        Initializes the company object using the given company code.
+        Initialize the acquisition interface for a specific company.
+
+        Args:
+            company_code (str): Ticker symbol or code for the company.
+        """
+        self.company_code = company_code.lower()
+        self.company: EarningsCompany = self._initialize_company()
+
+    def _initialize_company(self) -> EarningsCompany:
+        """
+        Retrieve the company object from the earningscall API.
+
+        Returns:
+            EarningsCompany: Initialized company object.
         """
         return get_company(self.company_code)
 
-    def get_and_save_one_transcript(self, base_path: str, year: int, quarter: int, level=3) -> None:
+    def get_and_save_one_transcript(
+        self, base_path: str, year: int, quarter: int, level: int = 3
+    ) -> None:
         """
-        Fetches and saves a single earnings call transcript for the specified year and quarter.
+        Fetch and save a single transcript for a given year and quarter.
+
+        Args:
+            base_path (str): Base directory to save the transcript.
+            year (int): Year of the earnings call.
+            quarter (int): Quarter of the earnings call.
+            level (int): Transcript level to fetch (default: 3).
         """
-        print(f"Fetching transcript for {self.company_code.upper()} Q{quarter} {year}")
+        logger.info(f"Fetching transcript for {self.company_code.upper()} Q{quarter} {year}")
         transcript = self.company.get_transcript(year=year, quarter=quarter, level=level)
 
-        path = os.path.join(base_path, self.company_code.upper(), str(year), f"Q{quarter}")
+        output_path = Path(base_path) / self.company_code.upper() / str(year) / f"Q{quarter}"
 
         if transcript:
-            self.save_transcript(transcript, path)
-            print(f"Transcript found and loaded. Q{quarter} {year}. [OK]")
+            self.save_transcripts_json({f"LEVEL_{level}": transcript}, output_path)
+            logger.info(f"Transcript found and saved. Q{quarter} {year}. [OK]")
         else:
-            print(f"No transcript found. Q{quarter} {year}. [ERROR]")
+            logger.warning(f"No transcript found. Q{quarter} {year}. [NOT FOUND]")
 
-    def get_and_save_all_transcripts_and_audio(self, base_path: str, level=4) -> None:
+    def get_and_save_all_transcripts_and_audio(self, base_path: str, level: int = 4) -> None:
         """
-        Fetches and saves all available earnings call transcripts for the company.
+        Fetch and store all available transcripts and audio files for the company.
+
+        Args:
+            base_path (str): Directory where results will be saved.
+            level (int): Transcript level to prioritize (default: 4).
         """
-        print(f"Fetching all transcripts for {self.company_code.upper()}..")
+        logger.info(f"Fetching all transcripts for {self.company_code.upper()}...")
 
         for event in self.company.events():
-            # Skip future events
             if datetime.now().timestamp() < event.conference_date.timestamp():
-                print(f"* {self.company.company_info.symbol} Q{event.quarter} {event.year} -- skipping, conference date in the future")
+                logger.info(
+                    f"* Skipping future event for {self.company_code.upper()} Q{event.quarter} {event.year}"
+                )
                 continue
+
             transcripts = {}
 
             try:
                 try:
-                    transcript_level_4 = self.company.get_transcript(event=event, level=4)
-                    transcripts['LEVEL_4'] = transcript_level_4
+                    transcripts['LEVEL_4'] = self.company.get_transcript(event=event, level=4)
                 except Exception as e:
-                    print(f"Failed to retrieve LEVEL_4 transcript: {e}")
-                try:
-                    transcript_level_3 = self.company.get_transcript(event=event, level=3)
-                    transcripts['LEVEL_3'] = transcript_level_3
-                except Exception as e:
-                    print(f"Failed to retrieve LEVEL_3 transcript: {e}")
+                    logger.warning(f"Failed to retrieve LEVEL_4: {e}", exc_info=True)
 
-                path = os.path.join(base_path, self.company_code.upper(), str(event.year), f"Q{event.quarter}")
+                try:
+                    transcripts['LEVEL_3'] = self.company.get_transcript(event=event, level=3)
+                except Exception as e:
+                    logger.warning(f"Failed to retrieve LEVEL_3: {e}", exc_info=True)
+
+                output_path = Path(base_path) / self.company_code.upper() / str(event.year) / f"Q{event.quarter}"
 
                 if transcripts:
-                    self.save_transcripts(transcripts, path)
-                    self.company.download_audio_file(event=event, file_name=path + '/audio.mp3')
-                    print(f"Transcript and audio found and loaded. Q{event.quarter} {event.year}. [OK]")
+                    self.save_transcripts(transcripts, output_path)
+                    try:
+                        self.company.download_audio_file(event=event, file_name=str(output_path / 'audio.mp3'))
+                    except Exception as e:
+                        logger.warning(f"Audio download failed for Q{event.quarter} {event.year}: {e}", exc_info=True)
+                    logger.info(f"Transcript and audio saved. Q{event.quarter} {event.year}. [OK]")
                 else:
-                    print(f"No transcript found. Q{event.quarter} {event.year}. [NOT FOUND]")
+                    logger.warning(f"No transcript found. Q{event.quarter} {event.year}. [NOT FOUND]")
+
             except Exception as e:
-                print(f"Error processing Q{event.quarter} {event.year} for {self.company_code.upper()}: {e}")
-        print("-" * 100)
+                logger.error(f"Unexpected error processing Q{event.quarter} {event.year}: {e}", exc_info=True)
 
+        logger.info("-" * 80)
 
-    def save_transcripts(self, transcripts:dict, path: str):
+    def save_transcripts(self, transcripts: dict, path: Path) -> None:
+        """
+        Save transcripts in both JSON and CSV formats.
+
+        Args:
+            transcripts (dict): Dictionary with transcript objects by level.
+            path (Path): Output directory path.
+        """
         self.save_transcripts_json(transcripts, path)
         self.save_transcript_csv(transcripts, path)
-        
-    
-    def save_transcripts_json(self, transcripts: dict, path: str) -> None:
+
+    def save_transcripts_json(self, transcripts: dict, path: Path) -> None:
         """
-        Saves the transcript dictionary to a JSON file.
+        Serialize and save transcripts as JSON files.
+
+        Args:
+            transcripts (dict): Dictionary of transcript objects by level.
+            path (Path): Output directory.
         """
-        # Ensure the directory exists
-        Path(path).mkdir(parents=True, exist_ok=True)
-        
+        path.mkdir(parents=True, exist_ok=True)
+
         for level, transcript in transcripts.items():
-            file_path = os.path.join(path, f'{level}.json')
+            file_path = path / f"{level}.json"
             try:
-                with open(file_path, "w", encoding="utf-8") as archivo:
-                    json.dump(transcript.to_dict(), archivo, indent=4, ensure_ascii=False)
+                with file_path.open("w", encoding="utf-8") as f:
+                    json.dump(transcript.to_dict(), f, indent=4, ensure_ascii=False)
             except Exception as e:
-                print(f"Failed to save transcript of level ({level}): {e}")
+                logger.error(f"Failed to save {level} transcript: {e}", exc_info=True)
 
-    def save_transcript_csv(self, transcripts: dict, path: str) -> None:
+    def save_transcript_csv(self, transcripts: dict, path: Path) -> None:
         """
-        Converts transcript data to CSV and saves it.
+        Convert and save LEVEL_3 transcript as a CSV file.
+
+        Args:
+            transcripts (dict): Transcript dictionary (must include 'LEVEL_3').
+            path (Path): Output directory.
         """
-        csv_path = os.path.join(path, "transcript.csv")
+        if 'LEVEL_3' not in transcripts:
+            logger.warning("No LEVEL_3 transcript available to save as CSV.")
+            return
 
-        speakers = transcripts['LEVEL_3'].to_dict().get("speakers", [])
-        rows = []
-        for speaker in speakers:
-
-            speaker_info = speaker.get("speaker_info", {})
-            name = speaker_info.get("name", None) if speaker_info else None
-            title = speaker_info.get("title", None) if speaker_info else None
-
-            row = {
-                    "speaker_id": speaker["speaker"],
-                    "name": name,
-                    "title": title,
-                    "text": speaker["text"],
-                    "start_time": speaker.get("start_times", [None])[0],
-                    "end_time": speaker.get("start_times", [None])[-1]}
-            rows.append(row)
-
-        df = pd.DataFrame(rows)
         try:
-            df.to_csv(csv_path, index=False, encoding="utf-8")
-        except Exception as e:
-            print(f"Failed to save transcript CSV: {e}")
+            speakers = transcripts['LEVEL_3'].to_dict().get("speakers", [])
+            rows = []
 
+            for speaker in speakers:
+                speaker_info = speaker.get("speaker_info", {})
+                row = {
+                    "speaker_id": speaker.get("speaker"),
+                    "name": speaker_info.get("name"),
+                    "title": speaker_info.get("title"),
+                    "text": speaker.get("text"),
+                    "start_time": speaker.get("start_times", [None])[0],
+                    "end_time": speaker.get("start_times", [None])[-1],
+                }
+                rows.append(row)
+
+            df = pd.DataFrame(rows)
+            df.to_csv(path / "transcript.csv", index=False, encoding="utf-8")
+
+        except Exception as e:
+            logger.error("Failed to save transcript CSV", exc_info=True)

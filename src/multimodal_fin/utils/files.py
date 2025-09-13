@@ -1,8 +1,10 @@
 """
 File and path utilities for the multimodal_fin package.
 
-Includes helpers for reading CSVs, JSONs, and locating conference files.
+Includes reusable helpers for reading CSV and JSON files,
+and locating specific files within conference directories.
 """
+
 from pathlib import Path
 from typing import List, Any
 import pandas as pd
@@ -10,17 +12,16 @@ import json
 
 
 def read_paths_csv(csv_path: str) -> List[str]:
-    """
-    Read a CSV file with a 'path' column and return the list of paths.
+    """Read a CSV file with a 'path' column and return a list of valid paths.
 
     Args:
-        csv_path (str): Path to the CSV file.
+        csv_path (str): Path to the CSV file containing a 'path' column.
 
     Returns:
-        List[str]: List of directory paths for conferences.
+        List[str]: List of paths to directories or files.
 
     Raises:
-        ValueError: If the CSV does not contain a 'path' column.
+        ValueError: If the 'path' column is missing from the CSV.
     """
     df = pd.read_csv(csv_path)
     if 'path' not in df.columns:
@@ -29,17 +30,17 @@ def read_paths_csv(csv_path: str) -> List[str]:
 
 
 def make_processed_path(original: Path) -> Path:
-    """
-    Determine the output directory for processed data based on the original path.
+    """Generate the processed output path from an original conference path.
 
-    If the segment 'companies' exists in the path, it is replaced with 'processed_companies'.
-    Otherwise, appends '_processed' to the original directory name under the same parent.
+    If the original path contains a folder named 'companies', it will be replaced
+    with 'processed_companies'. Otherwise, the method appends '_processed' to the
+    directory name under the same parent.
 
     Args:
-        original (Path): Original conference directory path.
+        original (Path): Original input directory path.
 
     Returns:
-        Path: Output directory path for processed results.
+        Path: Transformed path pointing to processed data.
     """
     parts = list(original.parts)
     try:
@@ -47,23 +48,21 @@ def make_processed_path(original: Path) -> Path:
         parts[idx] = 'processed_companies'
         return Path(*parts)
     except ValueError:
-        # Fallback: append suffix
         return original.parent / f"{original.name}_processed"
 
 
 def read_json_file(json_path: Path) -> Any:
-    """
-    Read a JSON file and return the parsed object.
+    """Read a JSON file and return its parsed content.
 
     Args:
-        json_path (Path): Path to the JSON file.
+        json_path (Path): Full path to a JSON file.
 
     Returns:
-        Any: Parsed JSON content.
+        Any: Parsed JSON content (usually a dict or list).
 
     Raises:
         FileNotFoundError: If the file does not exist.
-        json.JSONDecodeError: If the file is not valid JSON.
+        json.JSONDecodeError: If the file content is not valid JSON.
     """
     if not json_path.exists():
         raise FileNotFoundError(f"JSON file not found at {json_path}")
@@ -72,17 +71,16 @@ def read_json_file(json_path: Path) -> Any:
 
 
 def find_level3_json(directory: Path) -> Path:
-    """
-    Locate the 'LEVEL_3.json' file within a conference directory.
+    """Locate a LEVEL_3.json file in a given directory.
 
     Args:
-        directory (Path): Conference directory.
+        directory (Path): Directory to search in.
 
     Returns:
-        Path: Full path to LEVEL_3.json.
+        Path: Full path to the LEVEL_3.json file.
 
     Raises:
-        FileNotFoundError: If the file is not present.
+        FileNotFoundError: If the file is not found.
     """
     candidate = directory / 'LEVEL_3.json'
     if not candidate.exists():
@@ -91,17 +89,16 @@ def find_level3_json(directory: Path) -> Path:
 
 
 def find_audio_file(directory: Path) -> Path:
-    """
-    Locate an audio file (mp3, wav, or flac) within a conference directory.
+    """Locate the first audio file in a directory (supports mp3, wav, flac).
 
     Args:
-        directory (Path): Conference directory.
+        directory (Path): Directory to search in.
 
     Returns:
-        Path: Path to the first matching audio file.
+        Path: Full path to the first found audio file.
 
     Raises:
-        FileNotFoundError: If no audio file is found.
+        FileNotFoundError: If no supported audio file is found.
     """
     for ext in ('mp3', 'wav', 'flac'):
         for file in directory.glob(f'*.{ext}'):
