@@ -6,7 +6,9 @@ from typing import Optional
 from multimodal_fin.processing.multimodal.embeddings_extractor import EmbeddingsExtractor
 from multimodal_fin.processing.metadata.metadata_enricher import MetadataEnricher
 
-logger = logging.getLogger(__name__)
+from multimodal_fin.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class Processor:
@@ -15,10 +17,6 @@ class Processor:
       1. Embedding extraction for audio, text, and video.
       2. Metadata enrichment (QA analysis, coherence, topics).
       3. JSON serialization of enriched output.
-
-    Single responsibility:
-      - `EmbeddingsExtractor` handles feature extraction.
-      - `MetadataEnricher` enriches with metadata using LLMs.
     """
 
     def __init__(
@@ -94,10 +92,7 @@ class Processor:
 
         # Step 2: Enrich with metadata (topics, QA classification, coherence)
         logger.info("Step 2: Enriching with metadata...")
-        enriched_result = self.enricher.enrich(
-            df=df_with_embeddings,
-            original_dir=original_dir
-        )
+        enriched_result = self.enricher.enrich(df=df_with_embeddings)
 
         # Step 3: Serialize results to JSON
         logger.info("Step 3: Saving enriched results to JSON...")

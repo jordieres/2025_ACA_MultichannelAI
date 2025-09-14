@@ -4,9 +4,13 @@ from typing import List, Dict, Any, Tuple
 
 import pandas as pd
 
-from multimodal_fin.processing.metadata.intervention_analyzer import InterventionAnalyzer
+from multimodal_fin.processing.metadata.sec10k_analyzer import SEC10KAnalyzer
 from multimodal_fin.processing.metadata.qa_analyzer import QAAnalyzer
 from multimodal_fin.processing.metadata.coherence_analyzer import CoherenceAnalyzer
+
+from multimodal_fin.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -29,7 +33,7 @@ class MetadataEnricher:
 
     def __post_init__(self):
         self.topic_classifiers = [
-            InterventionAnalyzer(model=name, NUM_EVALUATIONS=self.num_evaluations)
+            SEC10KAnalyzer(model=name, NUM_EVALUATIONS=self.num_evaluations)
             for name in self.sec10k_model_names
         ]
         self.qa_analyzers = [
@@ -41,12 +45,11 @@ class MetadataEnricher:
             first_model = self.qa_analyzers[0].model_name
             self.coherence_analyzer = CoherenceAnalyzer(model_name=first_model)
 
-    def enrich(self, df: pd.DataFrame, original_dir: Path) -> Dict[str, Any]:
+    def enrich(self, df: pd.DataFrame) -> Dict[str, Any]:
         """Orchestrates enrichment of the dataframe into structured JSON.
 
         Args:
             df (pd.DataFrame): DataFrame containing sentences and their embeddings.
-            original_dir (Path): Directory containing LEVEL_3.json and audio.
 
         Returns:
             Dict[str, Any]: Structured metadata dictionary with monologues and Q&A pairs.
@@ -59,6 +62,7 @@ class MetadataEnricher:
             text = " ".join(group['text'])
             embeddings = self._get_multimodal_dict(group)
             topic_cat, topic_conf, topic_models = self._classify_topics(text)
+            logger.info(f"✅ Topic analysis completed for monologue {idx}: {topic_cat} ({topic_conf:.2f}%)")
 
             result['monologue_interventions'][str(idx)] = {
                 'text': text,
@@ -84,9 +88,13 @@ class MetadataEnricher:
             # Topic classification
             q_topic = self._classify_topics(question)
             a_topic = self._classify_topics(answer)
+            logger.info(f"✅ Topic analysis for question in {pair_id}: {q_topic[0]} ({q_topic[1]:.2f}%)")
+            logger.info(f"✅ Topic analysis for answer in {pair_id}: {a_topic[0]} ({a_topic[1]:.2f}%)")
+
 
             # QA classification
             qa_cat, qa_conf, qa_models, qa_details = self._analyze_qa_pair(question, answer)
+            logger.info(f"✅ QA analysis completed for pair {pair_id}: {qa_cat} ({qa_conf:.2f}%)")
             answered = qa_details.get('answered') if isinstance(qa_details, dict) else None
 
             # Coherence analysis
@@ -99,6 +107,8 @@ class MetadataEnricher:
                         coherence.append(coh)
                     except Exception:
                         continue  # Skip coherence errors silently
+
+            logger.info(f"✅ Coherence analysis completed for pair {pair_id} with {len(coherence)} monologue links")
 
             result[pair_id] = {
                 'question': question,
@@ -126,6 +136,8 @@ class MetadataEnricher:
                     'answer': self._get_multimodal_dict(a_group)
                 }
             }
+
+        logger.info(f"✅ Metadata enrichment completed. Enriched {len(monologues)} monologues and {len(result) - 1} QA pairs.")
 
         return result
 

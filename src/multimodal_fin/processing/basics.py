@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from typing import List, Optional, Callable, Tuple
 from collections import Counter
-import logging
 
 import ollama
 
-logger = logging.getLogger(__name__)
+from multimodal_fin.utils.logging import get_logger
+logger = get_logger(__name__)
 
 
 @dataclass

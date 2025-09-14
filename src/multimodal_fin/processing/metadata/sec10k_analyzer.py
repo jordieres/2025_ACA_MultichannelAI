@@ -15,7 +15,7 @@ class Category10K(BaseModel):
 
 
 @dataclass
-class InterventionAnalyzer(UncertaintyMixin):
+class SEC10KAnalyzer(UncertaintyMixin):
     """Class responsible for classifying intervention text into 10-K categories using LLMs.
 
     Attributes:

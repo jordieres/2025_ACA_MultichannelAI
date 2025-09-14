@@ -14,7 +14,7 @@ from multimodal_fin.processing.multimodal.audio.audio_emotion_analyzer import Au
 from multimodal_fin.processing.multimodal.text.text_emotion_analyzer import TextEmotionAnalyzer
 from multimodal_fin.processing.multimodal.video.video_emotion_analyzer import VideoEmotionAnalyzer
 
-# Patch for NumPy NEP 50 warning (avoid runtime errors)
+# Patch for NumPy NEP 50 warning (avoid runtime errors) https://stackoverflow.com/questions/77064579/module-numpy-has-no-attribute-no-nep50-warning
 def dummy_npwarn_decorator_factory():
     def npwarn_decorator(x):
         return x
@@ -53,7 +53,7 @@ class MultimodalEmbeddings:
         with open(self.path_json, 'r', encoding='utf-8') as f:
             data_json = json.load(f)
 
-        # Extract sentences from JSON with timestamps
+        # Extract sentences from interventions and align it with timestamps
         frases_json = []
         for speaker in data_json.get("speakers", []):
             words = speaker.get("words", [])
@@ -80,7 +80,7 @@ class MultimodalEmbeddings:
         # Split interventions from CSV into individual sentences
         frases_expandidas = []
         for _, row in df_csv.iterrows():
-            frases = re.split(r'(?<=[\\.!?])\\s+', row["text"])
+            frases = re.split(r'(?<=[\.!?])\s+', row["text"])
             for frase in frases:
                 if frase.strip():
                     nueva_fila = row.to_dict()

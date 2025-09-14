@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import torch
+import time
 
 from multimodal_fin.config import Settings
 from multimodal_fin.utils.logging import get_logger
@@ -76,6 +77,7 @@ class ConferencePipeline:
             FileNotFoundError: If transcript.csv or LEVEL_4.json is missing.
         """
         logger.info(f"🔄 Starting processing for conference: {original}")
+        start_time = time.perf_counter()
 
         # Create output directory
         processed_dir = make_processed_path(original)
@@ -104,3 +106,4 @@ class ConferencePipeline:
             output_json_path=str(output_json)
         )
         logger.info(f"✅ Enriched JSON saved at: {output_json}")
+        logger.info(f"⏱️ Finished processing conference: {original.name} in {(time.perf_counter() - start_time):.2f} seconds")
