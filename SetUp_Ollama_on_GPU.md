@@ -73,7 +73,7 @@ systemctl --user status ollama.service
 Follow logs in real time:
 
 ```bash
-journalctl --user -u ollama.service -f
+tail -f ~/ollama.log
 ```
 
 ---
