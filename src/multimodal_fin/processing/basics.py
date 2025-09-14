@@ -7,55 +7,79 @@ import ollama
 from multimodal_fin.utils.logging import get_logger
 logger = get_logger(__name__)
 
-
 @dataclass
 class LLMClient:
-    """Client wrapper for interacting with Ollama models via chat API.
+    """Client wrapper for interacting with Ollama models via the chat API.
 
-    Automatically normalizes and downloads the model if it's not available locally.
+    This class provides:
+      - Automatic model name normalization.
+      - Automatic model download if not available locally.
+      - Configurable Ollama server host.
     """
+
     model: str
+    host: Optional[str] = "http://127.0.0.1:11500"
 
     def __post_init__(self) -> None:
-        """Post-initialization: normalize model name and ensure it's downloaded."""
+        """Initialize client, normalize model name and ensure the model is available."""
+        logger.debug("Initializing LLMClient with model='%s', host='%s'", self.model, self.host)
+        self.client = ollama.Client(host=self.host) if self.host else ollama
         self.model = self._normalize_model_name(self.model)
+        logger.debug("Normalized model name: %s", self.model)
         self._ensure_model()
 
     def _normalize_model_name(self, model_name: str) -> str:
-        """Appends ':latest' to the model name if no tag is provided.
+        """Append ':latest' if the model name does not include a tag.
 
         Args:
-            model_name: Raw model name provided by the user.
+            model_name (str): Raw model name provided by the user.
 
         Returns:
-            Normalized model name with tag.
+            str: Normalized model name with tag.
         """
-        return model_name if ':' in model_name else f"{model_name}:latest"
+        if ':' in model_name:
+            return model_name
+        logger.debug("Model '%s' does not include a tag, appending ':latest'", model_name)
+        return f"{model_name}:latest"
 
     def _ensure_model(self) -> None:
-        """Checks if the model is available locally; if not, downloads it."""
-        available_models = [m.model for m in ollama.list().models]
-        if self.model not in available_models:
-            logger.info(f"Model '{self.model}' not found locally. Downloading...")
-            ollama.pull(self.model)
-            logger.info(f"Model downloaded: {self.model}")
+        """Check if the model is available locally; if not, download it."""
+        try:
+            available_models = [m.model for m in self.client.list().models]
+            logger.debug("Available models: %s", available_models)
+            if self.model not in available_models:
+                logger.info("Model '%s' not found locally. Downloading...", self.model)
+                self.client.pull(self.model)
+                logger.info("Model successfully downloaded: %s", self.model)
+            else:
+                logger.debug("Model '%s' is already available locally.", self.model)
+        except Exception as e:
+            logger.error("Failed to check or download model '%s': %s", self.model, str(e))
+            raise
 
     def chat(self, messages: List[dict], schema: Optional[str] = None) -> str:
-        """Sends a list of messages to the model and retrieves the response.
+        """Send a list of messages to the model and retrieve the response.
 
         Args:
-            messages: List of message dictionaries in Ollama format.
-            schema: Optional schema to enforce structured responses.
+            messages (List[dict]): List of message dictionaries in Ollama format.
+            schema (Optional[str]): JSON schema to enforce structured responses.
 
         Returns:
-            The content string of the model's response.
+            str: The content string of the model's response.
         """
-        response = (
-            ollama.chat(model=self.model, messages=messages, format=schema, options={"temperature": 0})
-            if schema else
-            ollama.chat(model=self.model, messages=messages, options={"temperature": 0})
-        )
-        return response.message.content
+        logger.debug("Sending chat request to model '%s' with schema=%s", self.model, schema)
+        try:
+            response = (
+                self.client.chat(model=self.model, messages=messages, format=schema, options={"temperature": 0})
+                if schema else
+                self.client.chat(model=self.model, messages=messages, options={"temperature": 0})
+            )
+            logger.debug("Received response from model '%s'", self.model)
+            return response.message.content
+        except Exception as e:
+            logger.error("Chat request to model '%s' failed: %s", self.model, str(e))
+            raise
+
 
 
 class UncertaintyMixin:
