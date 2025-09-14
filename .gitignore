@@ -69,7 +69,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+# docs/_build/
 
 # PyBuilder
 .pybuilder/
@@ -140,7 +140,7 @@ vpy/
 
 # mkdocs documentation
 /site
-/docs
+# /docs
 
 # mypy
 .mypy_cache/
