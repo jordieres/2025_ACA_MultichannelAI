@@ -1,6 +1,6 @@
 # 🧠 Running Ollama Locally on GPU
 
-This guide explains how to run an **Ollama server locally on GPUs** and ensure that it stays running in the background, even if you close your terminal or disconnect from VSCode.
+This guide explains how to run an **Ollama server locally on GPUs** and ensure that it stays running in the background.
 
 ---
 
@@ -86,32 +86,7 @@ Run:
 nvidia-smi
 ```
 
-You should see `/usr/local/bin/ollama` using GPU memory.  
+You should see `/usr/local/bin/ollama` using GPU memory while processing a conference.  
 Multiple Ollama processes may appear if several models are loaded in parallel.
-
----
-
-## 5. Connect from Python
-
-Point your Python client to the configured host:
-
-```python
-import ollama
-
-client = ollama.Client(host="http://127.0.0.1:11500")
-
-response = client.chat(
-    model="llama3:8b",
-    messages=[{"role": "user", "content": "Hello Ollama!"}]
-)
-
-print(response.message.content)
-```
-
----
-
-✅ Ollama is now running permanently in the background on your GPUs.  
-✅ Python code connects directly through the configured host and port.  
-✅ Models remain cached in GPU memory for faster inference.  
 
 ---
