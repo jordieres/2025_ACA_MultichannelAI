@@ -58,12 +58,11 @@ class SentenceAttentionEncoder(nn.Module):
             return_weights: Whether to return attention weights from [CLS] token to input tokens.
 
         Returns:
-            If return_weights is False:
-                Tensor of shape [B, hidden_dim] representing sentence-level embeddings.
-            If return_weights is True:
-                Tuple of (embeddings, attention_weights), where:
-                    - embeddings: [B, hidden_dim]
-                    - attention_weights: [B, N] average attention from CLS to tokens
+            torch.Tensor or Tuple[torch.Tensor, torch.Tensor]:
+                - If return_weights is False: tensor of shape [B, hidden_dim] representing sentence-level embeddings.
+                - If return_weights is True: tuple (embeddings, attention_weights), where:
+                    * embeddings: [B, hidden_dim]
+                    * attention_weights: [B, N] average attention from CLS to tokens
         """
         B, N, _ = x.shape
         x = self.input_proj(x)  # [B, N, hidden_dim]
