@@ -16,17 +16,19 @@ class EnsembleInterventionClassifier:
     """
     Combines multiple Q&A and monologue classifiers to label interventions in a transcript.
     Handles classification and pairing of questions and answers.
-
-    Attributes:
-        qa_model_names: List of Q&A classifier model names.
-        monologue_model_names: List of monologue classifier model names.
-        NUM_EVALUATIONS: Number of repeated evaluations per classifier for stability.
-        verbose: Verbosity level for logging.
     """
+
     qa_model_names: List[str]
+    """List of Q&A classifier model names."""
+
     monologue_model_names: List[str]
+    """List of monologue classifier model names."""
+
     NUM_EVALUATIONS: int = 5
+    """Number of repeated evaluations per classifier for stability."""
+
     verbose: int = 1
+    """Verbosity level for logging."""
 
     def __post_init__(self):
         self.qna_classifiers = [

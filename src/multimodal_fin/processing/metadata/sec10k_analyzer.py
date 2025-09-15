@@ -16,15 +16,13 @@ class Category10K(BaseModel):
 
 @dataclass
 class SEC10KAnalyzer(UncertaintyMixin):
-    """Class responsible for classifying intervention text into 10-K categories using LLMs.
+    """Class responsible for classifying intervention text into 10-K categories using LLMs."""
 
-    Attributes:
-        model (str): The name of the LLM model to use.
-        NUM_EVALUATIONS (int): Number of times the classification is repeated to estimate uncertainty.
-    """
+    model: str = "llama3"
+    """The name of the LLM model to use."""
 
-    model: str = 'llama3'
     NUM_EVALUATIONS: int = 10
+    """Number of times the classification is repeated to estimate uncertainty."""
 
     def __post_init__(self):
         self.llm = LLMClient(self.model)

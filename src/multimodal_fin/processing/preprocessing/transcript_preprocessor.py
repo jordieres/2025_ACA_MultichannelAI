@@ -3,9 +3,10 @@ from typing import Optional
 import pandas as pd
 import json
 import os
-import logging
 
-logger = logging.getLogger(__name__)
+from multimodal_fin.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -13,15 +14,16 @@ class TranscriptPreprocessor:
     """
     Preprocesses a conference transcript by identifying the beginning of the Q&A section
     and labeling each row as either 'prepared_remarks' or 'q_a'.
-
-    Attributes:
-        section_col (str): Name of the column to write the section labels.
-        text_col (str): Column containing the transcript text.
-        qna_key (str): Key used to extract the Q&A intro from the JSON metadata.
     """
+
     section_col: str = "Conf_Section"
+    """Name of the column to write the section labels."""
+
     text_col: str = "text"
+    """Column containing the transcript text."""
+
     qna_key: str = "questions_and_answers"
+    """Key used to extract the Q&A intro from the JSON metadata."""
 
     def extract_qna_intro(self, json_path: str) -> Optional[str]:
         """

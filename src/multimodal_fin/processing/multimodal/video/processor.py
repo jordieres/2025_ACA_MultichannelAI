@@ -1,19 +1,19 @@
 from dataclasses import dataclass
 import numpy as np
-import logging
 
-logger = logging.getLogger(__name__)
+from multimodal_fin.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
 class VideoProcessor:
     """
     Handles video processing tasks like frame extraction and frame sampling.
-
-    Attributes:
-        skips (float): Proportion of frames to retain from the video (0 < skips <= 1).
     """
+
     skips: float = 0.1
+    """Proportion of frames to retain from the video (0 < skips <= 1)."""
 
     def reduce_video_frames(self, video_data: list) -> list:
         """

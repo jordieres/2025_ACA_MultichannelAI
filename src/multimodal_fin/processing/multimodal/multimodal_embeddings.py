@@ -26,21 +26,25 @@ np._no_nep50_warning = getattr(np, '_no_nep50_warning', dummy_npwarn_decorator_f
 class MultimodalEmbeddings:
     """
     Generates multimodal emotion-based embeddings (audio, text, video) from transcript data.
-
-    Attributes:
-        path_csv: Path to the classified CSV containing interventions.
-        path_json: Path to the LEVEL_3 JSON with temporal info.
-        audio_file_path: Path to the full audio file.
-        audio_emotion_analyzer: Audio emotion embedding model.
-        text_emotion_analyzer: Text emotion embedding model.
-        video_emmotion_analyzer: Video emotion embedding model.
     """
+
     path_csv: str
+    """Path to the classified CSV containing interventions."""
+
     path_json: str
+    """Path to the LEVEL_3 JSON with temporal information."""
+
     audio_file_path: str
+    """Path to the full audio file."""
+
     audio_emotion_analyzer: Optional[AudioEmotionAnalyzer] = None
+    """Audio emotion embedding model."""
+
     text_emotion_analyzer: Optional[TextEmotionAnalyzer] = None
+    """Text emotion embedding model."""
+
     video_emmotion_analyzer: Optional[VideoEmotionAnalyzer] = None
+    """Video emotion embedding model."""
 
     def __post_init__(self):
         self.sentences_df = self._extract_sentences_df()

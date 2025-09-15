@@ -7,22 +7,25 @@ import torch
 from multimodal_fin.processing.multimodal.audio.recognizers.base import AudioEmotionRecognizer
 from multimodal_fin.processing.multimodal.audio.recognizers.emotion2vec import Emotion2VecRecognizer
 
-logger = logging.getLogger(__name__)
+from multimodal_fin.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
 class AudioEmotionAnalyzer:
     """
     Extracts emotion-based audio embeddings or emotion classifications using a specified recognizer.
-
-    Attributes:
-        mode (str): The name of the recognition model type. Currently, only 'emotion2vec' is supported.
-        device (str): The computation device to use ('cuda' or 'cpu').
-        model_name (str): Name or path of the model to be loaded.
     """
+
     mode: str = "emotion2vec"
-    device: str = 'cuda' if torch.cuda.is_available() else 'cpu'
+    """The name of the recognition model type. Currently, only 'emotion2vec' is supported."""
+
+    device: str = "cuda" if torch.cuda.is_available() else "cpu"
+    """The computation device to use ('cuda' or 'cpu')."""
+
     model_name: str = "iic/emotion2vec_plus_large"
+    """Name or path of the model to be loaded."""
 
     def __post_init__(self):
         match self.mode:

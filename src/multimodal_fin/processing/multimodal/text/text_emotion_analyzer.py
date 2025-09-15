@@ -6,8 +6,9 @@ import pandas as pd
 import torch
 from transformers import pipeline
 
-# Initialize logger
-logger = logging.getLogger(__name__)
+from multimodal_fin.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -19,13 +20,13 @@ class TextEmotionAnalyzer:
     - Full probability distribution (for emotion embeddings)
     - Top emotion label (mapped to standard format)
     - Classification of DataFrames
-
-    Attributes:
-        model_name: HF model to use for classification.
-        device: 'cuda' or 'cpu'.
     """
+
     model_name: str = "j-hartmann/emotion-english-distilroberta-base"
-    device: str = 'cuda' if torch.cuda.is_available() else 'cpu'
+    """HF model to use for classification."""
+
+    device: str = "cuda" if torch.cuda.is_available() else "cpu"
+    """Computation device: 'cuda' or 'cpu'."""
 
     def __post_init__(self):
         logger.info(f"Loading text emotion model: {self.model_name} on {self.device}")

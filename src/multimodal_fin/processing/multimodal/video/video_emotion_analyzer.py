@@ -10,7 +10,9 @@ from multimodal_fin.processing.multimodal.video.recognizers.vit import VITRecogn
 from multimodal_fin.processing.multimodal.video.recognizers.fer import FERRecognizer
 from multimodal_fin.processing.multimodal.video.recognizers.emotieff import EmotiEffRecognizer
 
-logger = logging.getLogger(__name__)
+from multimodal_fin.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -21,19 +23,22 @@ class VideoEmotionAnalyzer:
     This class orchestrates the process of detecting faces,
     recognizing emotions per frame, and aggregating predictions
     to produce a single dominant emotion for the full video.
-
-    Attributes:
-        mode (str): Recognition model type ('vit', 'fer', 'emotieff').
-        skips (float): Fraction of frames to process.
-        method (str): Aggregation strategy ('mode', 'mean', 'abs').
-        device (str): Device to use ('cuda' or 'cpu').
-        emotieff_model (str): Model name for EmotiEffRecognizer.
     """
+
     mode: str
+    """Recognition model type ('vit', 'fer', 'emotieff')."""
+
     skips: float = 0.1
+    """Fraction of frames to process."""
+
     method: str = "mode"
-    device: str = 'cuda' if torch.cuda.is_available() else 'cpu'
+    """Aggregation strategy ('mode', 'mean', 'abs')."""
+
+    device: str = "cuda" if torch.cuda.is_available() else "cpu"
+    """Device to use ('cuda' or 'cpu')."""
+
     emotieff_model: str = "enet_b0_8_best_afew"
+    """Model name for EmotiEffRecognizer."""
 
     def __post_init__(self):
         logger.info(f"Initializing video analysis with mode={self.mode}, device={self.device}")

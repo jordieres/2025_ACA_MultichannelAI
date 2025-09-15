@@ -26,14 +26,13 @@ class InterventionAnalysis(BaseModel):
 
 @dataclass
 class QAAnalyzer(UncertaintyMixin):
-    """Analyzes Q&A interactions by evaluating whether questions were answered in responses.
+    """Analyzes Q&A interactions by evaluating whether questions were answered in responses."""
 
-    Attributes:
-        model_name (str): Name of the LLM to use.
-        NUM_EVALUATIONS (int): Number of LLM passes to estimate uncertainty.
-    """
     model_name: str = "llama3"
+    """Name of the LLM to use."""
+
     NUM_EVALUATIONS: int = 5
+    """Number of LLM passes to estimate uncertainty."""
 
     def __post_init__(self):
         """Initializes the LLM client and prompt builder."""

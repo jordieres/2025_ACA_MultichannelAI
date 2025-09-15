@@ -15,21 +15,22 @@ logger = get_logger(__name__)
 
 @dataclass
 class MetadataEnricher:
-    """Enriches a DataFrame with metadata about topic, QA, and coherence.
-
-    Attributes:
-        sec10k_model_names (List[str]): List of model names used for topic classification.
-        qa_analyzer_models (List[str]): List of models used for QA answerability analysis.
-        num_evaluations (int): Number of repetitions per model to compute uncertainty.
-        device (str): Device for model inference (e.g., 'cpu' or 'cuda').
-        verbose (int): Verbosity level (0: silent, 1: info).
-    """
+    """Enriches a DataFrame with metadata about topic, QA, and coherence."""
 
     sec10k_model_names: List[str]
+    """List of model names used for topic classification."""
+
     qa_analyzer_models: List[str]
+    """List of models used for QA answerability analysis."""
+
     num_evaluations: int = 5
-    device: str = 'cpu'
+    """Number of repetitions per model to compute uncertainty."""
+
+    device: str = "cpu"
+    """Device for model inference (e.g., 'cpu' or 'cuda')."""
+
     verbose: int = 1
+    """Verbosity level (0: silent, 1: info)."""
 
     def __post_init__(self):
         self.topic_classifiers = [

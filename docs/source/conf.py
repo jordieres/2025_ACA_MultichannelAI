@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'AI-in-Finance'
+project = 'Multimodal-AI-in-Finance'
 copyright = '2025, Alejandro Álvarez'
 author = 'Alejandro Álvarez'
 release = '1.0.0'

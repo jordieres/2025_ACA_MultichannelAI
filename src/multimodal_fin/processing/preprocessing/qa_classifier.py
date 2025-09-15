@@ -8,8 +8,9 @@ from pydantic import BaseModel
 from multimodal_fin.processing.basics import LLMClient, UncertaintyMixin
 from multimodal_fin.processing.metadata.prompt_builder import PromptBuilder
 
-import logging
-logger = logging.getLogger(__name__)
+from multimodal_fin.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class CategoryQA(BaseModel):
@@ -21,11 +22,13 @@ class CategoryQA(BaseModel):
 class QAClassifier(UncertaintyMixin):
     """
     Classifier for identifying Q&A intervention types using an LLM with uncertainty estimation.
-    
-    Attributes:
-        model (str): LLM model name.
-        NUM_EVALUATIONS (int): Number of times to sample the model for uncertainty estimation.
     """
+
+    model: str = "llama3"
+    """LLM model name."""
+
+    NUM_EVALUATIONS: int = 5
+    """Number of times to sample the model for uncertainty estimation."""
     
     model: str = 'llama3'
     NUM_EVALUATIONS: int = 5

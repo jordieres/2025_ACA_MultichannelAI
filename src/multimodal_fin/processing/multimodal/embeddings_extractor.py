@@ -11,7 +11,9 @@ from multimodal_fin.processing.multimodal.text.text_emotion_analyzer import Text
 
 from multimodal_fin.processing.multimodal.multimodal_embeddings import MultimodalEmbeddings
 
-logger = logging.getLogger(__name__)
+from multimodal_fin.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -20,23 +22,25 @@ class EmbeddingsExtractor:
     Extracts multimodal emotion embeddings from a CSV of conference interventions.
 
     The extractor supports:
-      - Audio emotion embeddings via `AudioEmotionAnalysis`.
+      - Audio emotion embeddings via `AudioEmotionAnalyzer`.
       - Text emotion embeddings via `TextEmotionAnalyzer`.
-      - Video emotion embeddings via `VideoEmotionAnalysis`.
-
-    Attributes:
-        audio_model_name: Name of the model used for audio emotion recognition.
-        text_model_name: Name of the model used for text emotion recognition.
-        video_model_name: Name of the model used for video emotion recognition.
-        device: Computation device (e.g., 'cpu', 'cuda').
-        verbose: Verbosity level for logging.
+      - Video emotion embeddings via `VideoEmotionAnalyzer`.
     """
 
     audio_model_name: Optional[str] = None
+    """Name of the model used for audio emotion recognition."""
+
     text_model_name: Optional[str] = None
+    """Name of the model used for text emotion recognition."""
+
     video_model_name: Optional[str] = None
+    """Name of the model used for video emotion recognition."""
+
     device: str = "cpu"
+    """Computation device (e.g., 'cpu', 'cuda')."""
+
     verbose: int = 1
+    """Verbosity level for logging."""
 
     def __post_init__(self):
         """Initializes emotion analyzers based on selected modalities."""

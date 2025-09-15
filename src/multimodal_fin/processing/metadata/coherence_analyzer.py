@@ -26,11 +26,10 @@ class CoherenceAnalysis(BaseModel):
 class CoherenceAnalyzer:
     """
     Analyzes the logical coherence between a monologue and a response using an LLM model.
-
-    Attributes:
-        model_name (str): The name of the model used for inference (default is "llama3").
     """
+    
     model_name: str = "llama3"
+    """Name of the model used for inference (default is "llama3")."""
 
     def __post_init__(self):
         """Initializes the prompt builder used to generate system/user messages."""

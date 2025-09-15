@@ -11,22 +11,26 @@ from multimodal_fin.processing.multimodal.video.recognizers.vit import VITRecogn
 from multimodal_fin.processing.multimodal.video.recognizers.emotieff import EmotiEffRecognizer
 from multimodal_fin.processing.multimodal.video.processor import VideoProcessor
 
-logger = logging.getLogger(__name__)
+
+from multimodal_fin.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
 class EmotionVideoAnalyzer:
     """
     Coordinates the facial emotion analysis from video frames.
-
-    Attributes:
-        recognizer (EmotionRecognizer): A model-specific emotion recognizer.
-        face_detector (FaceDetector): The face detector to crop faces from frames.
-        processor (VideoProcessor): Frame processor for sampling frames from video.
     """
+
     recognizer: EmotionRecognizer
+    """Model-specific emotion recognizer."""
+
     face_detector: FaceDetector
+    """Face detector to crop faces from frames."""
+
     processor: VideoProcessor
+    """Frame processor for sampling frames from video."""
 
     def analyze_video_frames(self, frames: List) -> pd.DataFrame:
         """
