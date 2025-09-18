@@ -57,7 +57,7 @@ class Event:
             if self.plot_flags.get("car", False):
                 EventVisualizer.plot_ar_car(self.df_results, self.event_date)
 
-            if self.plot_flags.get("retornos", False):
+            if self.plot_flags.get("returns", False):
                 df_stock = self.loader.load_returns(self.ticker)
                 EventVisualizer.plot_event_periods(
                     df_returns=df_stock,

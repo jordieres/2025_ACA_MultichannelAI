@@ -18,18 +18,18 @@ class EventVisualizer:
         df = df.copy()
         fig, ax1 = plt.subplots(figsize=(12, 6))
         ax1.bar(df["Date"], df["AR"], color="skyblue", label="AR diario")
-        ax1.set_ylabel("Retorno Anormal Diario")
+        ax1.set_ylabel("Daily Abnoral Returns (AR)")
         ax1.axhline(0, color="gray", linestyle="--")
 
         ax2 = ax1.twinx()
-        ax2.plot(df["Date"], df["CAR"], color="red", label="CAR acumulado", linewidth=2)
-        ax2.set_ylabel("CAR acumulado")
+        ax2.plot(df["Date"], df["CAR"], color="red", label="Cumulative Abnormal Returns (CAR)", linewidth=2)
+        ax2.set_ylabel("Cumulative Abnormal Returns (CAR)")
 
         h1, l1 = ax1.get_legend_handles_labels()
         h2, l2 = ax2.get_legend_handles_labels()
         ax1.legend(h1 + h2, l1 + l2, loc="upper left")
 
-        ax1.set_xlabel("Fecha")
+        ax1.set_xlabel("Date")
 
         fechas = df["Date"].dt.strftime("%Y-%m-%d")
         event_date_str = pd.to_datetime(event_date).strftime("%Y-%m-%d")
@@ -45,7 +45,7 @@ class EventVisualizer:
                 label.set_color("black")
                 label.set_fontweight("normal")
 
-        plt.title("Retornos Anormales (AR) y CAR acumulado")
+        plt.title("Abnormal Returns (AR) and Cumulative Abnormal Returns (CAR)")
         plt.tight_layout()
         plt.show()
 
