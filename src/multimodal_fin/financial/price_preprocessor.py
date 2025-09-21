@@ -36,3 +36,5 @@ class PricePreprocessor:
             logger.debug(f"Saved {ticker} data to {filename}")
 
         logger.info(f"Finished splitting dataset into {len(tickers)} CSV files.")
+
+        return tickers

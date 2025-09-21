@@ -1,6 +1,9 @@
 import pandas as pd
 from multimodal_fin.financial.event import Event
 
+from multimodal_fin.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 class EventPipeline:
     """Process multiple events in batch."""
@@ -24,6 +27,18 @@ class EventPipeline:
 
         events = []
         for ts, symbol in zip(df["timestamp"], df["symbol"]):
-            event = Event(event_date=ts, ticker=symbol, folder_path=self.folder_path)
-            events.append(event)
+            if ticker_filter and symbol != ticker_filter:
+                continue
+
+            try:
+                event = Event(event_date=ts, ticker=symbol, folder_path=self.folder_path)
+            except ValueError as e:
+                # Casos como "Alpha and beta must be estimated..." o ventana vacía
+                logger.error(f"Skipping event for {symbol} at {ts}: {e}")
+                continue
+
+            # Añadimos solo si hay resultados
+            if event.df_results is not None:
+                events.append(event)
+
         return events

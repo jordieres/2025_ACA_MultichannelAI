@@ -2,16 +2,21 @@ import pandas as pd
 import statsmodels.api as sm
 from datetime import datetime, timedelta
 
+from multimodal_fin.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 class EventCalculator:
     """Performs market model estimation and abnormal return calculations."""
 
-    def __init__(self, event_date: str, t1_offset: int = -7, t2_offset: int = 7):
+    def __init__(self, event_date: str, t1_offset: int = -7, t2_offset: int = 7, ticker: str = None):
         self.event_date = datetime.strptime(event_date, "%Y-%m-%d")
         self.t1_offset = t1_offset
         self.t2_offset = t2_offset
+        self.ticker = ticker
         self.alpha = None
         self.beta = None
+        
 
     def get_windows(self) -> dict:
         """Define estimation and event windows.
@@ -33,16 +38,31 @@ class EventCalculator:
             df_stock (pd.DataFrame): Stock returns (Date, Return).
             df_market (pd.DataFrame): Market returns (Date, Return).
         """
+        # logger.info(f"Estimating market model for {self.ticker} on {self.event_date}")
         df = pd.merge(df_stock, df_market, on="Date", suffixes=("_stock", "_market"))
         windows = self.get_windows()
         df_window = df[
             (df["Date"] >= windows["estimation_start"]) & (df["Date"] <= windows["estimation_end"])
         ].dropna()
 
-        X = sm.add_constant(df_window["Return_market"])
-        y = df_window["Return_stock"]
-        model = sm.OLS(y, X).fit()
-        self.alpha, self.beta = model.params
+        if df_window.empty:
+            logger.error(
+                f"[EventCalculator] Empty estimation window for {self.ticker} at {self.event_date}"
+            )
+            self.alpha, self.beta = None, None
+            return
+
+        try:
+            X = sm.add_constant(df_window["Return_market"])
+            y = df_window["Return_stock"]
+            model = sm.OLS(y, X).fit()
+            self.alpha, self.beta = model.params
+        except Exception as e:
+            logger.error(
+                f"[EventCalculator] Market model estimation failed for {self.ticker} "
+                f"at {self.event_date}: {str(e)}"
+            )
+            self.alpha, self.beta = None, None
 
     def calculate_abnormal_returns(
         self, df_stock: pd.DataFrame, df_market: pd.DataFrame

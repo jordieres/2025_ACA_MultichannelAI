@@ -30,21 +30,28 @@ class Event:
 
     def __post_init__(self):
         self.loader = DataLoader(self.folder_path)
-        self.calculator = EventCalculator(self.event_date, self.t1_offset, self.t2_offset)
+        self.calculator = EventCalculator(self.event_date, self.t1_offset, self.t2_offset, self.ticker)
 
         df_stock = self.loader.load_returns(self.ticker)
         df_market = self.loader.load_returns(self.market_ticker)
 
-        # logger.info(f"Estimating market model for {self.ticker} on {self.event_date}")
-        self.calculator.estimate_market_model(df_stock, df_market)
-        df_event = self.calculator.calculate_abnormal_returns(df_stock, df_market)
+        try:
+            self.calculator.estimate_market_model(df_stock, df_market)
+            df_event = self.calculator.calculate_abnormal_returns(df_stock, df_market)
+        except ValueError as e:
+            logger.error(f"[Event] Skipping {self.ticker} on {self.event_date}: {e}")
+            self.df_results = None
+            self.car = None
+            return
+
 
         self.df_results = df_event
         self.car = df_event["AR"].sum()
+
         self.alpha = self.calculator.alpha
         self.beta = self.calculator.beta
 
-        logger.info(f"Finished event study for {self.ticker} | CAR = {self.car:.4%}")
+        # logger.info(f"Finished event study for {self.ticker} | CAR = {self.car:.4%}")
 
     def summary(self) -> None:
         """Print event summary."""

@@ -79,7 +79,7 @@ def analyze_statistical_significance(
     )
 
     df_result = pd.concat([df_ar_stats, summary], ignore_index=True)
-    return df_result
+    return df_result, summary
 
 
 def plot_AR_significance(df_ar_stats: pd.DataFrame, alpha: float = 0.05) -> None:
