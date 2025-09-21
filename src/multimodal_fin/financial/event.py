@@ -51,7 +51,7 @@ class Event:
         self.alpha = self.calculator.alpha
         self.beta = self.calculator.beta
 
-        logger.info(f"Finished event study for {self.ticker} | CAR = {self.car:.4%}")
+        logger.debug(f"Finished event study for {self.ticker} | CAR = {self.car:.4%}")
 
     def summary(self) -> None:
         """Print event summary."""
