@@ -17,7 +17,7 @@ class EventVisualizer:
         """
         df = df.copy()
         fig, ax1 = plt.subplots(figsize=(12, 6))
-        ax1.bar(df["Date"], df["AR"], color="skyblue", label="AR diario")
+        ax1.bar(df["Date"], df["AR"], color="skyblue", label="Daily AR")
         ax1.set_ylabel("Daily Abnoral Returns (AR)")
         ax1.axhline(0, color="gray", linestyle="--")
 
