@@ -1,92 +1,92 @@
+from dataclasses import dataclass, field
+from typing import Optional, List, Dict, Tuple
 import pandas as pd
+import numpy as np
 import statsmodels.api as sm
-from datetime import datetime, timedelta
 
+from multimodal_fin.financial.data_loader import DataLoader
+from multimodal_fin.financial.event import Event, EventResult
 from multimodal_fin.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
 class EventCalculator:
-    """Performs market model estimation and abnormal return calculations."""
+    """Market-model estimator and AR/CAR calculator for a given event."""
 
-    def __init__(self, event_date: str, t1_offset: int = -7, t2_offset: int = 7, ticker: str = None):
-        self.event_date = datetime.strptime(event_date, "%Y-%m-%d")
-        self.t1_offset = t1_offset
-        self.t2_offset = t2_offset
-        self.ticker = ticker
-        self.alpha = None
-        self.beta = None
-        
+    def __init__(self, data_loader: DataLoader, market_ticker: str = "SPGI",
+                 use_hac: bool = False, hac_lags: int = 5):
+        self.loader = data_loader
+        self.market_ticker = market_ticker
+        self.use_hac = use_hac
+        self.hac_lags = hac_lags
 
-    def get_windows(self) -> dict:
-        """Define estimation and event windows.
-
-        Returns:
-            dict: Dictionary with estimation and event start/end dates.
-        """
-        return {
-            "estimation_start": self.event_date - timedelta(days=80),
-            "estimation_end": self.event_date - timedelta(days=27),
-            "event_start": self.event_date + timedelta(days=self.t1_offset),
-            "event_end": self.event_date + timedelta(days=self.t2_offset),
-        }
-
-    def estimate_market_model(self, df_stock: pd.DataFrame, df_market: pd.DataFrame) -> None:
-        """Estimate alpha and beta using market model.
+    def analyze_event(
+        self,
+        ev: Event,
+        window_to_report: Tuple[int, int] = None
+    ) -> Event:
+        """Estimate (alpha, beta), compute AR/CAR, and fill ev.result.
 
         Args:
-            df_stock (pd.DataFrame): Stock returns (Date, Return).
-            df_market (pd.DataFrame): Market returns (Date, Return).
-        """
-        # logger.info(f"Estimating market model for {self.ticker} on {self.event_date}")
-        df = pd.merge(df_stock, df_market, on="Date", suffixes=("_stock", "_market"))
-        windows = self.get_windows()
-        df_window = df[
-            (df["Date"] >= windows["estimation_start"]) & (df["Date"] <= windows["estimation_end"])
-        ].dropna()
-
-        if df_window.empty:
-            logger.error(
-                f"[EventCalculator] Empty estimation window for {self.ticker} at {self.event_date}"
-            )
-            self.alpha, self.beta = None, None
-            return
-
-        try:
-            X = sm.add_constant(df_window["Return_market"])
-            y = df_window["Return_stock"]
-            model = sm.OLS(y, X).fit()
-            self.alpha, self.beta = model.params
-        except Exception as e:
-            logger.error(
-                f"[EventCalculator] Market model estimation failed for {self.ticker} "
-                f"at {self.event_date}: {str(e)}"
-            )
-            self.alpha, self.beta = None, None
-
-    def calculate_abnormal_returns(
-        self, df_stock: pd.DataFrame, df_market: pd.DataFrame
-    ) -> pd.DataFrame:
-        """Calculate abnormal returns (AR) and cumulative abnormal returns (CAR).
-
-        Args:
-            df_stock (pd.DataFrame): Stock returns.
-            df_market (pd.DataFrame): Market returns.
+            ev: Event to analyze. Must have estimation_start/end set.
+            window_to_report: Single (t1, t2) window to compute CAR.
 
         Returns:
-            pd.DataFrame: DataFrame with AR and CAR values.
+            The same Event with `result` populated.
         """
-        if self.alpha is None or self.beta is None:
-            raise ValueError("Alpha and beta must be estimated before calculating AR.")
+        if ev.estimation_start is None or ev.estimation_end is None:
+            raise ValueError(f"Event {ev.ticker} {ev.event_date.date()} has no estimation window assigned.")
 
-        df = pd.merge(df_stock, df_market, on="Date", suffixes=("_stock", "_market"))
-        windows = self.get_windows()
-        df_event = df[
-            (df["Date"] >= windows["event_start"]) & (df["Date"] <= windows["event_end"])
-        ].dropna()
+        # Load returns
+        df_stock = self.loader.load_returns(ev.ticker).rename(columns={"Return": "Return_stock"})
+        df_mkt = self.loader.load_returns(self.market_ticker).rename(columns={"Return": "Return_market"})
 
-        df_event["Expected"] = self.alpha + self.beta * df_event["Return_market"]
-        df_event["AR"] = df_event["Return_stock"] - df_event["Expected"]
-        df_event["CAR"] = df_event["AR"].cumsum()
+        df = pd.merge(df_stock, df_mkt, on="Date", how="inner").dropna()
+        df = df.sort_values("Date")
 
-        return df_event
+        # Estimation window
+        df_est = df[(df["Date"] >= ev.estimation_start) & (df["Date"] <= ev.estimation_end)].copy()
+        n_est = len(df_est)
+        if n_est == 0:
+            logger.error(f"[{ev.ticker}] No stock data in estimation window for event: {ev.quarter} {ev.year} ")
+            ev.result = None
+            return ev
+
+        # OLS
+        X = sm.add_constant(df_est["Return_market"])
+        y = df_est["Return_stock"]
+        model = sm.OLS(y, X)
+        if self.use_hac:
+            fit = model.fit(cov_type="HAC", cov_kwds={"maxlags": self.hac_lags})
+        else:
+            fit = model.fit()
+
+        alpha = float(fit.params["const"])
+        beta = float(fit.params["Return_market"])
+
+        # Full AR/CAR
+        df["Expected"] = alpha + beta * df["Return_market"]
+        df["AR"] = df["Return_stock"] - df["Expected"]
+        df["t"] = (df["Date"] - ev.event_date).dt.days
+        df["CAR"] = df["AR"].cumsum()
+
+        # Default or provided window
+        if window_to_report is None:
+            raise ValueError("A wondow to report must be provided.")
+        elif not isinstance(window_to_report, tuple) or len(window_to_report) != 2:
+            raise ValueError("window_to_report must be a tuple (t1, t2).")
+
+        t1, t2 = window_to_report
+        dfw = df[(df["t"] >= t1) & (df["t"] <= t2)]
+        car_val = float(dfw["AR"].sum()) if not dfw.empty else np.nan
+
+        car_by_window = {window_to_report: car_val}
+
+        ev.result = EventResult(
+            alpha=alpha,
+            beta=beta,
+            df_results=df,
+            car_by_window=car_by_window,
+            n_estimation_obs=n_est
+        )
+        return ev

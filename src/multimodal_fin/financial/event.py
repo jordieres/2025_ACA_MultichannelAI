@@ -1,83 +1,79 @@
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Optional, Dict, Tuple
+from datetime import datetime
 import pandas as pd
 
-from multimodal_fin.financial.data_loader import DataLoader
-from multimodal_fin.financial.calculator import EventCalculator
 from multimodal_fin.financial.visualizer import EventVisualizer
-
+from multimodal_fin.financial.data_loader import DataLoader
 from multimodal_fin.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
 
 @dataclass
+class EventResult:
+    """Stores calculation results of an event study."""
+    alpha: float
+    beta: float
+    df_results: pd.DataFrame  # ['Date','Return_stock','Return_market','Expected','AR','CAR','t']
+    car_by_window: Dict[Tuple[int, int], float]  # e.g. {(0,30): 0.0123}
+    n_estimation_obs: int
+
+
+@dataclass
 class Event:
-    """Domain class representing a financial event."""
+    """Represents a single financial event (e.g. earnings call)."""
 
-    event_date: str
+    event_date: datetime
     ticker: str
-    market_ticker: str = "SPGI"
-    folder_path: str = "./data"
-    t1_offset: int = -7
-    t2_offset: int = 7
-    plot_flags: Optional[dict] = None
+    company_name: Optional[str] = None
+    quarter: Optional[str] = None
+    year: Optional[int] = None
 
-    df_results: pd.DataFrame = field(init=False)
-    car: float = field(init=False)
-    alpha: float = field(init=False)
-    beta: float = field(init=False)
+    estimation_start: Optional[datetime] = None
+    estimation_end: Optional[datetime] = None
+    gap: Optional[int] = None
 
-    def __post_init__(self):
-        self.loader = DataLoader(self.folder_path)
-        self.calculator = EventCalculator(self.event_date, self.t1_offset, self.t2_offset, self.ticker)
+    result: Optional[EventResult] = None  # se rellena tras cálculo
 
-        df_stock = self.loader.load_returns(self.ticker)
-        df_market = self.loader.load_returns(self.market_ticker)
+    def compute_car(self, t1: int, t2: int) -> Optional[float]:
+        """Compute CAR on demand for a given event window."""
+        if self.result is None or self.result.df_results is None:
+            return None
+        df = self.result.df_results
+        dfw = df[(df["t"] >= t1) & (df["t"] <= t2)]
+        return float(dfw["AR"].sum()) if not dfw.empty else None
+        
 
-        try:
-            self.calculator.estimate_market_model(df_stock, df_market)
-            df_event = self.calculator.calculate_abnormal_returns(df_stock, df_market)
-        except ValueError as e:
-            logger.error(f"[Event] Skipping {self.ticker} on {self.event_date}: {e}")
-            self.df_results = None
-            self.car = None
+    def report(self, plot_config: Optional[dict] = None) -> None:
+        plot_config = plot_config or {"plot_car": True, "plot_periods": True, "plot_year": None}
+
+        if self.result is None:
+            print(f"⚠️ Event {self.ticker} on {self.event_date.date()} has no results.")
             return
 
+        (t1, t2), car_val = next(iter(self.result.car_by_window.items()))
 
-        self.df_results = df_event
-        self.car = df_event["AR"].sum()
+        print(f"\n📅 Event: {self.event_date.date()} ({self.ticker})")
+        print(f"Company: {self.company_name or 'Unknown'}")
+        print(f"Estimation window: {self.estimation_start.date()} → {self.estimation_end.date()} (gap={self.gap})")
+        print(f"Alpha: {self.result.alpha:.6f}")
+        print(f"Beta: {self.result.beta:.6f}")
+        print(f"CAR [{t1},{t2}]: {car_val:.4%}")
 
-        self.alpha = self.calculator.alpha
-        self.beta = self.calculator.beta
+        loader = DataLoader("/home/aacastro/2025_ACA_MultichannelAI/data/financial/companies_closes")
+        df_stock = loader.load_returns(self.ticker)
 
-        logger.debug(f"Finished event study for {self.ticker} | CAR = {self.car:.4%}")
+        if plot_config.get("plot_car", True):
+            EventVisualizer.plot_ar_car(self, t1, t2)
 
-    def summary(self) -> None:
-        """Print event summary."""
-        print(f"\n📅 Event: {self.event_date} ({self.ticker})")
-        print(f"Alpha: {self.alpha:.6f}")
-        print(f"Beta: {self.beta:.6f}")
-        print(f"CAR [{self.t1_offset}, {self.t2_offset}]: {self.car:.4%}")
-
-        if self.plot_flags and any(self.plot_flags.values()):
-            if self.plot_flags.get("car", False):
-                EventVisualizer.plot_ar_car(self.df_results, self.event_date)
-
-            if self.plot_flags.get("returns", False):
-                df_stock = self.loader.load_returns(self.ticker)
-                EventVisualizer.plot_event_periods(
-                    df_returns=df_stock,
-                    ticker=self.ticker,
-                    event_date=self.event_date,
-                    estimation_start=self.calculator.get_windows()["estimation_start"],
-                    estimation_end=self.calculator.get_windows()["estimation_end"],
-                    event_start=self.calculator.get_windows()["event_start"],
-                    event_end=self.calculator.get_windows()["event_end"],
-                )
-
-            if self.plot_flags.get("modelo", False):
-                # TODO: implementar plot de modelo de mercado
-                logger.info("Plotting market model (not yet implemented).")
-
-
+        if plot_config.get("plot_periods", True):
+            EventVisualizer.plot_event_periods(
+                df_returns=df_stock,
+                ticker=self.ticker,
+                event_date=self.event_date,
+                estimation_start=self.estimation_start,
+                estimation_end=self.estimation_end,
+                event_start=self.event_date + pd.Timedelta(days=t1),
+                event_end=self.event_date + pd.Timedelta(days=t2),
+            )

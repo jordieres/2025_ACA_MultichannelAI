@@ -37,4 +37,4 @@ class PricePreprocessor:
 
         logger.info(f"Finished splitting dataset into {len(tickers)} CSV files.")
 
-        return tickers
+        # return tickers
