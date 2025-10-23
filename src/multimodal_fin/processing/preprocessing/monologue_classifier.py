@@ -59,7 +59,7 @@ class MonologueClassifier(UncertaintyMixin):
         Returns:
             A tuple of (predicted_category, confidence_score).
         """
-        logger.info("Running ensemble prediction...")
+        logger.info("Running ensemble prediction for Monologue text...")
         predicted_categories = [self.classify_text(text) for _ in range(self.NUM_EVALUATIONS)]
         return self.get_result_and_uncertainty(
             predict_fn=lambda _: predicted_categories.pop(0),

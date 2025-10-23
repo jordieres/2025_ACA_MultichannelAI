@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import List
 
 import pandas as pd
+import re
 
 from multimodal_fin.processing.preprocessing.ensemble_classifier import EnsembleInterventionClassifier
 from multimodal_fin.utils.logging import get_logger
@@ -104,7 +105,12 @@ class Preprocessor:
         """
         df = self.divide_conference(csv_path, json_path)
         df = self.classifier.classify_dataframe(df)
+
+        df = self.segment_multi_questions(df, self.text_col)
+
         df = self.classifier.annotate_question_answer_pairs(df)
+
+
         return df
 
     def process_and_save(self, csv_path: str, json_path: str, output_csv_path: str) -> pd.DataFrame:
@@ -123,3 +129,47 @@ class Preprocessor:
         df.to_csv(output_csv_path, index=False)
         logger.info(f"Processed transcript saved to {output_csv_path}")
         return df
+    
+
+    def segment_multi_questions(self, df: pd.DataFrame, text_col: str = "text") -> pd.DataFrame:
+        """
+        Splits interventions classified as 'question' into multiple subquestions,
+        using both punctuation ('?') and discourse markers (e.g. 'And then', 'Second', 'For ...').
+        """
+        expanded_rows = []
+
+        for _, row in df.iterrows():
+            if str(row.get("classification", "")).lower() != "question":
+                expanded_rows.append(row)
+                continue
+
+            text = str(row[text_col])
+
+            # Only attempt if multiple '?' or strong discourse markers exist
+            if text.count("?") <= 1 and not re.search(r"\b(First|Second|Third|And then|For [A-Z])\b", text):
+                expanded_rows.append(row)
+                continue
+
+            # Split using '?', conjunctions, and speaker redirections
+            sub_qs = re.split(
+                r"(?:(?<=\?)\s+(?=[A-Z¿]))|(?=\b(?:And then|Second|Third|For [A-Z][a-z]+|Also|Additionally|Next)\b)",
+                text
+            )
+
+            # Clean and filter
+            sub_qs = [q.strip() for q in sub_qs if len(q.strip()) > 20]
+
+            if len(sub_qs) <= 1:
+                expanded_rows.append(row)
+                continue
+
+            # Create rows for each subquestion
+            for i, q in enumerate(sub_qs):
+                new_row = row.copy()
+                new_row[text_col] = q
+                new_row["subquestion_index"] = i
+                expanded_rows.append(new_row)
+
+        expanded_df = pd.DataFrame(expanded_rows).reset_index(drop=True)
+        logger.info(f"Segmented {len(df)} → {len(expanded_df)} rows after subquestion expansion.")
+        return expanded_df

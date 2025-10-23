@@ -82,15 +82,17 @@ def analyze_statistical_significance(
     return df_result, summary
 
 
-def plot_AR_significance(df_ar_stats: pd.DataFrame, alpha: float = 0.05) -> None:
-    """Plot average AR per t with error bars and mark statistical significance.
+def plot_AR_significance(df_ar_stats: pd.DataFrame, alpha: float = 0.05, window: tuple[int, int] = None) -> None:
+    """Plot average AR per relative day (t) with error bars and significance markers.
 
     Args:
         df_ar_stats (pd.DataFrame): DataFrame with columns
             ['t', 'mean_AR', 'std_AR', 'n', 't_stat', 'p_value'].
         alpha (float, optional): Significance threshold. Defaults to 0.05.
+        window (tuple[int,int], optional): (t1, t2) event window to highlight. 
+            If provided, the x-axis will be clipped to this range.
     """
-    # 🔥 Filtrar solo filas numéricas en t
+    # Filtrar solo filas con t numérico
     df = df_ar_stats[pd.to_numeric(df_ar_stats["t"], errors="coerce").notna()].copy()
     df["t"] = df["t"].astype(int)
 
@@ -123,7 +125,13 @@ def plot_AR_significance(df_ar_stats: pd.DataFrame, alpha: float = 0.05) -> None
                 fontsize=15,
             )
 
+    # Reference line
     plt.axhline(0, color="gray", linestyle="--")
+
+    # Highlight window if provided
+    if window is not None:
+        plt.axvspan(window[0], window[1], color="orange", alpha=0.1, label=f"Window {window}")
+
     plt.title("Average Abnormal Returns (AR) by day relative to event")
     plt.xlabel("Relative day (t)")
     plt.ylabel("Average Abnormal Return")

@@ -3,6 +3,9 @@ from typing import List, Tuple, Optional
 
 import pandas as pd
 
+from sentence_transformers import SentenceTransformer, util
+import torch
+
 from multimodal_fin.processing.preprocessing.qa_classifier import QAClassifier
 from multimodal_fin.processing.preprocessing.monologue_classifier import MonologueClassifier
 from multimodal_fin.processing.preprocessing.transcript_preprocessor import TranscriptPreprocessor
@@ -101,43 +104,97 @@ class EnsembleInterventionClassifier:
 
         return df
 
-    def annotate_question_answer_pairs(self, df: pd.DataFrame) -> pd.DataFrame:
+
+    def annotate_question_answer_pairs(self, 
+                                   df: pd.DataFrame, 
+                                   window_size: int = 4, 
+                                   similarity_threshold: float = 0.45) -> pd.DataFrame:
         """
-        Assigns a unique ID to valid question-answer pairs in the transcript.
+        Annotates question-answer pairs based on semantic similarity within a contextual window,
+        using the 'multi-qa-MiniLM-L6-cos-v1' model.
+
+    #     El flujo ideal sería:
+    #     Recorres el DataFrame ordenado cronológicamente.
+    #     Cada vez que encuentras una respuesta, buscas hacia atrás las últimas N preguntas no emparejadas.
+    #     Para cada una calculas una medida de similitud semántica (embedding). https://sbert.net/docs/sentence_transformer/pretrained_models.html#multi-qa-models
+    #     Asignas la respuesta a la pregunta con mayor similitud (si pasa un umbral).
+    #     Si la respuesta parece abarcar varias preguntas (similares entre sí), puedes emparejar más de una.
 
         Args:
-            df: DataFrame already classified by `classify_dataframe`.
+            df (pd.DataFrame): Classified transcript with 'classification' and 'text' columns.
+            window_size (int): How many previous questions to consider for each answer.
+            similarity_threshold (float): Minimum cosine similarity to form a valid Q→A pair.
 
         Returns:
-            DataFrame with an added 'Pair' column for Q&A associations and 'intervention_id'.
-        
-        Raises:
-            ValueError: If any detected pair does not contain exactly two elements.
+            pd.DataFrame: Annotated DataFrame with 'Pair' and 'intervention_id' columns.
         """
+        df = df.reset_index(drop=True)
         pair_id = 1
-        current_question_row = None
-        pairs = []
+        pairs = [None] * len(df)
 
-        for index, row in df.iterrows():
-            if row['classification'] == "Question":
-                current_question_row = index
-                pairs.append(None)
-            elif row['classification'] == "Answer" and current_question_row is not None:
-                pairs[current_question_row] = f"pair_{pair_id}"
-                pairs.append(f"pair_{pair_id}")
-                pair_id += 1
-                current_question_row = None
-            else:
-                pairs.append(None)
+        # Load the QA-optimized model
+        model = SentenceTransformer("sentence-transformers/multi-qa-MiniLM-L6-cos-v1")
 
-        df['Pair'] = pairs
-        pair_counts = df['Pair'].value_counts(dropna=True)
-        invalid_pairs = pair_counts[pair_counts != 2]
+        # Precompute normalized embeddings for all texts
+        texts = df["text"].fillna("").tolist()
+        embeddings = model.encode(texts, convert_to_tensor=True, normalize_embeddings=True)
 
-        if not invalid_pairs.empty:
-            raise ValueError(
-                f"Invalid Q&A pairs detected (must contain exactly 2 rows):\n{invalid_pairs.to_dict()}"
-            )
+        # Maintain a buffer of open questions
+        open_questions = []
 
+        for idx, row in df.iterrows():
+            role = str(row.get("classification", "")).lower()
+
+            if role == "question":
+                open_questions.append(idx)
+
+            elif role == "answer" and open_questions:
+                # Limit to last N open questions
+                candidate_idxs = open_questions[-window_size:]
+                question_embs = embeddings[candidate_idxs]
+                answer_emb = embeddings[idx].unsqueeze(0)
+
+                # Compute cosine similarities
+                sim_scores = util.cos_sim(answer_emb, question_embs).cpu().numpy().flatten()
+
+                # Pick the best matching question
+                best_idx = int(torch.argmax(torch.tensor(sim_scores)))
+                best_score = sim_scores[best_idx]
+                chosen_q = candidate_idxs[best_idx]
+
+                # Check similarity threshold
+                if best_score >= similarity_threshold:
+                    pair_label = f"pair_{pair_id}"
+                    pairs[chosen_q] = pair_label
+                    pairs[idx] = pair_label
+                    pair_id += 1
+
+                    # Remove matched question
+                    open_questions = [q for q in open_questions if q != chosen_q]
+
+                    logger.debug(
+                        f"Matched Q{chosen_q} ↔ A{idx} with similarity={best_score:.3f} "
+                        f"(Pair={pair_label})"
+                    )
+                else:
+                    logger.debug(
+                        f"No strong match for answer {idx}: best_score={best_score:.3f}"
+                    )
+
+        # Assign results
+        df["Pair"] = pairs
         df["intervention_id"] = df.index
+
+        # Logging unmatched elements
+        unmatched_qs = [i for i, p in enumerate(pairs) if df.loc[i, "classification"] == "Question" and p is None]
+        unmatched_as = [i for i, p in enumerate(pairs) if df.loc[i, "classification"] == "Answer" and p is None]
+
+        logger.info(f"Annotated {pair_id - 1} valid Q&A pairs.")
+        logger.info(f"Unmatched questions: {len(unmatched_qs)}, unmatched answers: {len(unmatched_as)}")
+
+        df["similarity_score"] = [
+            None if p is None else float(util.cos_sim(embeddings[idx], embeddings[df[df["Pair"] == p].index[0]]))
+            for idx, p in enumerate(pairs)
+        ]
+
         return df
