@@ -26,6 +26,7 @@ class Event:
 
     event_date: datetime
     ticker: str
+    origin_companies_closes: str #= "/home/aacastro/2025_ACA_MultichannelAI/data/financial/companies_closes"
     company_name: Optional[str] = None
     quarter: Optional[str] = None
     year: Optional[int] = None
@@ -61,7 +62,7 @@ class Event:
         print(f"Beta: {self.result.beta:.6f}")
         print(f"CAR [{t1},{t2}]: {car_val:.4%}")
 
-        loader = DataLoader("/home/aacastro/2025_ACA_MultichannelAI/data/financial/companies_closes")
+        loader = DataLoader(self.origin_companies_closes)
         df_stock = loader.load_returns(self.ticker)
 
         if plot_config.get("plot_car", True):

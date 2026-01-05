@@ -15,6 +15,7 @@ class CompanyEvents:
     """Container and scheduler for all events of a single company."""
 
     ticker: str
+    origin_companies_closes: str
     company_name: Optional[str] = None
     events: List[Event] = field(default_factory=list)
 
@@ -30,7 +31,8 @@ class CompanyEvents:
                 ticker=self.ticker,
                 company_name=self.company_name,
                 quarter=quarter,
-                year=year
+                year=year,
+                origin_companies_closes=self.origin_companies_closes
             )
         )
         self.events.sort(key=lambda e: e.event_date)

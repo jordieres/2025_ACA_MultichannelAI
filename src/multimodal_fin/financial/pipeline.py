@@ -42,7 +42,7 @@ class EventPipeline:
             raise ValueError(f"No events for ticker {ticker} in conference CSV.")
 
         company_name = df_t["company"].iloc[0] if "company" in df_t.columns else None
-        comp = CompanyEvents(ticker=ticker, company_name=company_name)
+        comp = CompanyEvents(ticker=ticker, company_name=company_name, origin_companies_closes=self.prices_folder)
         for _, row in df_t.iterrows():
             comp.add_event(event_date=row["timestamp"], quarter=row["quarter"], year=row["year"])
         return comp
