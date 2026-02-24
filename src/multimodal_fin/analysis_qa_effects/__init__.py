@@ -7,7 +7,6 @@ from .stats.population_evidence import PopulationEvidenceAnalyzer
 from .stats.effect_sizes import StatsTester
 
 from .plotting.aggregated_plots import AggregatedEffectPlotter
-from .plotting.dissonance_plots import DissonanceAnalyzer
 from .plotting.answer_plotter import AnswerPlotter
 
 from .io.transcript_loader import TranscriptQALoader
