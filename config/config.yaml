@@ -32,9 +32,9 @@ conferences_processing:
       video:
         enabled: false
         model_name: vit  # "trpakov/vit-face-expression"
-    evals: 3
+    evals: 5
     device: cuda
-    verbose: 1
+    verbose: 0
 
 
 embeddings_pipeline:
