@@ -1,0 +1,18 @@
+Loaded 248 QA pairs from 20 conferences for company AAPL.
+Loaded 178 QA pairs from 15 conferences for company WMB.
+Loaded 421 QA pairs from 22 conferences for company TDG.
+Loaded 116 QA pairs from 15 conferences for company AWK.
+Loaded 263 QA pairs from 13 conferences for company ECL.
+
+=== BENCH SUMMARY ===
+companies: 5
+total_seconds: 84.29
+Top stages:
+      runner_run_total: 80.98s
+           models_init: 2.83s
+            spacy_load: 0.46s
+          save_outputs: 0.00s
+         pipeline_init: 0.00s
+           config_init: 0.00s
+
+Outputs in: runs/bench_smoke/gpus_2/worker_1_gpu1

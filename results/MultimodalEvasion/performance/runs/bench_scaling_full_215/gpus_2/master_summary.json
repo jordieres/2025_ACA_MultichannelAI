@@ -1,0 +1,59 @@
+{
+  "n_gpus": 2,
+  "gpu_ids": [
+    0,
+    1
+  ],
+  "n_companies_total": 215,
+  "seconds_wall_total": 1783.904516923998,
+  "max_worker_wall_time": 1766.268295293994,
+  "min_worker_wall_time": 1739.5889118420018,
+  "exit_codes": [
+    0,
+    0
+  ],
+  "workers": [
+    {
+      "gpu": 0,
+      "n_companies": 108,
+      "dir": "runs/bench_scaling_full_215/gpus_2/worker_0_gpu0",
+      "summary": {
+        "timestamp_utc": "2026-02-25T17:18:10.277907+00:00",
+        "hostname": "ip-172-31-36-42",
+        "cuda_visible_devices": "0",
+        "n_companies": 108,
+        "n_rows_df_all": 1512,
+        "total_seconds_wall": 1739.5889118420018,
+        "stage_times": {
+          "config_init": 3.4609984140843153e-06,
+          "spacy_load": 0.46888298200792633,
+          "models_init": 2.573282855009893,
+          "pipeline_init": 2.225101343356073e-05,
+          "runner_run_total": 1736.5324366670102,
+          "save_outputs": 0.00819894700543955
+        }
+      }
+    },
+    {
+      "gpu": 1,
+      "n_companies": 107,
+      "dir": "runs/bench_scaling_full_215/gpus_2/worker_1_gpu1",
+      "summary": {
+        "timestamp_utc": "2026-02-25T17:18:36.894114+00:00",
+        "hostname": "ip-172-31-36-42",
+        "cuda_visible_devices": "1",
+        "n_companies": 107,
+        "n_rows_df_all": 1498,
+        "total_seconds_wall": 1766.268295293994,
+        "stage_times": {
+          "config_init": 3.630993887782097e-06,
+          "spacy_load": 0.465090494020842,
+          "models_init": 2.4723402230010834,
+          "pipeline_init": 2.2940977942198515e-05,
+          "runner_run_total": 1763.3163924929977,
+          "save_outputs": 0.008239910996053368
+        }
+      }
+    }
+  ]
+}

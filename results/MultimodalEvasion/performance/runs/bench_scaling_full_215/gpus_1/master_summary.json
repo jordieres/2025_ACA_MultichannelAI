@@ -1,0 +1,36 @@
+{
+  "n_gpus": 1,
+  "gpu_ids": [
+    0
+  ],
+  "n_companies_total": 215,
+  "seconds_wall_total": 3414.015069563,
+  "max_worker_wall_time": 3396.137115805992,
+  "min_worker_wall_time": 3396.137115805992,
+  "exit_codes": [
+    0
+  ],
+  "workers": [
+    {
+      "gpu": 0,
+      "n_companies": 215,
+      "dir": "runs/bench_scaling_full_215/gpus_1/worker_0_gpu0",
+      "summary": {
+        "timestamp_utc": "2026-02-25T16:48:51.121672+00:00",
+        "hostname": "ip-172-31-36-42",
+        "cuda_visible_devices": "0",
+        "n_companies": 215,
+        "n_rows_df_all": 3010,
+        "total_seconds_wall": 3396.137115805992,
+        "stage_times": {
+          "config_init": 3.810011548921466e-06,
+          "spacy_load": 0.4695285410271026,
+          "models_init": 2.389523362973705,
+          "pipeline_init": 2.2370018996298313e-05,
+          "runner_run_total": 3393.2562104130047,
+          "save_outputs": 0.015666243009036407
+        }
+      }
+    }
+  ]
+}

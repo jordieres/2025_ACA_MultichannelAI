@@ -1,0 +1,23 @@
+Loaded 181 QA pairs from 13 conferences for company KMI.
+Loaded 248 QA pairs from 20 conferences for company AAPL.
+Loaded 204 QA pairs from 13 conferences for company ABNB.
+Loaded 178 QA pairs from 15 conferences for company WMB.
+Loaded 293 QA pairs from 17 conferences for company PSX.
+Loaded 421 QA pairs from 22 conferences for company TDG.
+Loaded 127 QA pairs from 9 conferences for company APD.
+Loaded 116 QA pairs from 15 conferences for company AWK.
+Loaded 179 QA pairs from 21 conferences for company AMZN.
+Loaded 263 QA pairs from 13 conferences for company ECL.
+
+=== BENCH SUMMARY ===
+companies: 10
+total_seconds: 149.53
+Top stages:
+      runner_run_total: 146.45s
+           models_init: 2.61s
+            spacy_load: 0.46s
+          save_outputs: 0.00s
+         pipeline_init: 0.00s
+           config_init: 0.00s
+
+Outputs in: runs/bench_smoke/gpus_1/worker_0_gpu0

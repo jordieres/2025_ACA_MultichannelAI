@@ -1,0 +1,16 @@
+{
+  "timestamp_utc": "2026-02-25T17:55:35.347947+00:00",
+  "hostname": "ip-172-31-36-42",
+  "cuda_visible_devices": "1",
+  "n_companies": 54,
+  "n_rows_df_all": 756,
+  "total_seconds_wall": 950.5484322980046,
+  "stage_times": {
+    "config_init": 3.6799756344407797e-06,
+    "spacy_load": 0.46014927301439457,
+    "models_init": 2.65350967599079,
+    "pipeline_init": 2.0620005670934916e-05,
+    "runner_run_total": 947.4239518340037,
+    "save_outputs": 0.0047665860038250685
+  }
+}

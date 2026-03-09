@@ -1,0 +1,21 @@
+{
+  "timestamp_utc": "2026-02-24T20:19:36.658930+00:00",
+  "hostname": "ip-172-31-36-42",
+  "platform": "Linux-6.17.0-1007-aws-x86_64-with-glibc2.39",
+  "python": "3.12.3",
+  "cwd": "/home/ubuntu/AlejandroA/2025_ACA_MultichannelAI/performance",
+  "env": {
+    "CUDA_VISIBLE_DEVICES": "0",
+    "OMP_NUM_THREADS": "4",
+    "MKL_NUM_THREADS": "4"
+  },
+  "args": {
+    "paths_csv": "/home/ubuntu/AlejandroA/2025_ACA_MultichannelAI/data/full_paths.csv",
+    "processed_root": "/home/ubuntu/AlejandroA/processed_companies",
+    "outdir": "runs/bench_smoke/gpus_2/worker_0_gpu0",
+    "plot_company": "",
+    "limit_companies": 0,
+    "companies_json": "runs/bench_smoke/gpus_2/worker_0_gpu0/companies.json",
+    "spacy_model": "en_core_web_sm"
+  }
+}

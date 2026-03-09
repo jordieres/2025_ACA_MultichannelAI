@@ -1,0 +1,18 @@
+Loaded 181 QA pairs from 13 conferences for company KMI.
+Loaded 204 QA pairs from 13 conferences for company ABNB.
+Loaded 293 QA pairs from 17 conferences for company PSX.
+Loaded 127 QA pairs from 9 conferences for company APD.
+Loaded 179 QA pairs from 21 conferences for company AMZN.
+
+=== BENCH SUMMARY ===
+companies: 5
+total_seconds: 80.02
+Top stages:
+      runner_run_total: 77.19s
+           models_init: 2.36s
+            spacy_load: 0.46s
+          save_outputs: 0.00s
+         pipeline_init: 0.00s
+           config_init: 0.00s
+
+Outputs in: runs/bench_smoke/gpus_2/worker_0_gpu0

@@ -1,0 +1,22 @@
+{
+  "worker_script": "study_answers_cli.py",
+  "paths_csv": "/home/ubuntu/AlejandroA/2025_ACA_MultichannelAI/data/full_paths.csv",
+  "processed_root": "/home/ubuntu/AlejandroA/processed_companies",
+  "plot_company": "",
+  "limit_companies": 0,
+  "n_companies": 215,
+  "gpu_counts": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "physical_gpus": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "cpu_threads_per_worker": 4,
+  "python_executable": "/home/ubuntu/AlejandroA/env/bin/python"
+}

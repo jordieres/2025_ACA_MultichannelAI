@@ -1,0 +1,82 @@
+{
+  "n_gpus": 3,
+  "gpu_ids": [
+    0,
+    1,
+    2
+  ],
+  "n_companies_total": 215,
+  "seconds_wall_total": 1245.4063019430032,
+  "max_worker_wall_time": 1227.5904146810062,
+  "min_worker_wall_time": 1177.8262886180019,
+  "exit_codes": [
+    0,
+    0,
+    0
+  ],
+  "workers": [
+    {
+      "gpu": 0,
+      "n_companies": 72,
+      "dir": "runs/bench_scaling_full_215/gpus_3/worker_0_gpu0",
+      "summary": {
+        "timestamp_utc": "2026-02-25T17:38:34.602457+00:00",
+        "hostname": "ip-172-31-36-42",
+        "cuda_visible_devices": "0",
+        "n_companies": 72,
+        "n_rows_df_all": 1008,
+        "total_seconds_wall": 1177.8262886180019,
+        "stage_times": {
+          "config_init": 3.949971869587898e-06,
+          "spacy_load": 0.4601165780040901,
+          "models_init": 2.467730901989853,
+          "pipeline_init": 2.1639978513121605e-05,
+          "runner_run_total": 1174.8848715850036,
+          "save_outputs": 0.007469991978723556
+        }
+      }
+    },
+    {
+      "gpu": 1,
+      "n_companies": 72,
+      "dir": "runs/bench_scaling_full_215/gpus_3/worker_1_gpu1",
+      "summary": {
+        "timestamp_utc": "2026-02-25T17:39:02.982277+00:00",
+        "hostname": "ip-172-31-36-42",
+        "cuda_visible_devices": "1",
+        "n_companies": 72,
+        "n_rows_df_all": 1008,
+        "total_seconds_wall": 1205.9455622920068,
+        "stage_times": {
+          "config_init": 3.910012310370803e-06,
+          "spacy_load": 0.4672174679872114,
+          "models_init": 2.402195736998692,
+          "pipeline_init": 2.2469990653917193e-05,
+          "runner_run_total": 1203.0640741890238,
+          "save_outputs": 0.005879805015865713
+        }
+      }
+    },
+    {
+      "gpu": 2,
+      "n_companies": 71,
+      "dir": "runs/bench_scaling_full_215/gpus_3/worker_2_gpu2",
+      "summary": {
+        "timestamp_utc": "2026-02-25T17:39:24.467168+00:00",
+        "hostname": "ip-172-31-36-42",
+        "cuda_visible_devices": "2",
+        "n_companies": 71,
+        "n_rows_df_all": 994,
+        "total_seconds_wall": 1227.5904146810062,
+        "stage_times": {
+          "config_init": 3.960012691095471e-06,
+          "spacy_load": 0.4631925539870281,
+          "models_init": 2.4000069510075264,
+          "pipeline_init": 2.1921005100011826e-05,
+          "runner_run_total": 1224.715049704013,
+          "save_outputs": 0.0059331369993742555
+        }
+      }
+    }
+  ]
+}

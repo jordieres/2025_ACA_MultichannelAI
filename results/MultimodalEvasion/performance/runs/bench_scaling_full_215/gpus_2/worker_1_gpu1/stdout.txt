@@ -1,0 +1,120 @@
+Loaded 248 QA pairs from 20 conferences for company AAPL.
+Loaded 178 QA pairs from 15 conferences for company WMB.
+Loaded 421 QA pairs from 22 conferences for company TDG.
+Loaded 116 QA pairs from 15 conferences for company AWK.
+Loaded 263 QA pairs from 13 conferences for company ECL.
+Loaded 259 QA pairs from 21 conferences for company MCD.
+Loaded 246 QA pairs from 21 conferences for company DHR.
+Loaded 115 QA pairs from 9 conferences for company MDT.
+Loaded 208 QA pairs from 19 conferences for company ACN.
+Loaded 342 QA pairs from 24 conferences for company AMAT.
+Loaded 100 QA pairs from 7 conferences for company CSCO.
+Loaded 280 QA pairs from 23 conferences for company MA.
+Loaded 180 QA pairs from 15 conferences for company NEM.
+Loaded 135 QA pairs from 9 conferences for company OKE.
+Loaded 277 QA pairs from 14 conferences for company JPM.
+Loaded 335 QA pairs from 21 conferences for company CMG.
+Loaded 164 QA pairs from 17 conferences for company MTCH.
+Loaded 218 QA pairs from 20 conferences for company V.
+Loaded 215 QA pairs from 13 conferences for company WY.
+Loaded 425 QA pairs from 16 conferences for company ROST.
+Loaded 71 QA pairs from 5 conferences for company NFLX.
+Loaded 442 QA pairs from 18 conferences for company SHW.
+Loaded 155 QA pairs from 13 conferences for company KHC.
+Loaded 181 QA pairs from 19 conferences for company KDP.
+Loaded 259 QA pairs from 22 conferences for company BKNG.
+Loaded 60 QA pairs from 6 conferences for company KVUE.
+Loaded 228 QA pairs from 19 conferences for company BKR.
+Loaded 305 QA pairs from 20 conferences for company ADP.
+Loaded 210 QA pairs from 24 conferences for company NVDA.
+Loaded 236 QA pairs from 22 conferences for company ABT.
+Loaded 366 QA pairs from 14 conferences for company CTAS.
+Loaded 152 QA pairs from 17 conferences for company CSGP.
+Loaded 187 QA pairs from 20 conferences for company CTVA.
+Loaded 331 QA pairs from 23 conferences for company CI.
+Loaded 116 QA pairs from 19 conferences for company BLK.
+Loaded 151 QA pairs from 20 conferences for company EXC.
+Loaded 224 QA pairs from 14 conferences for company MLM.
+Loaded 230 QA pairs from 22 conferences for company JNJ.
+Loaded 263 QA pairs from 17 conferences for company TT.
+Loaded 135 QA pairs from 14 conferences for company PANW.
+Loaded 127 QA pairs from 8 conferences for company IFF.
+Loaded 180 QA pairs from 16 conferences for company EA.
+Loaded 227 QA pairs from 21 conferences for company DIS.
+Loaded 405 QA pairs from 20 conferences for company ETN.
+Loaded 272 QA pairs from 19 conferences for company LLY.
+Loaded 294 QA pairs from 20 conferences for company EOG.
+Loaded 136 QA pairs from 21 conferences for company MNST.
+Loaded 220 QA pairs from 19 conferences for company SYY.
+Loaded 106 QA pairs from 15 conferences for company D.
+Loaded 150 QA pairs from 15 conferences for company OMC.
+Loaded 295 QA pairs from 17 conferences for company EMN.
+Loaded 197 QA pairs from 17 conferences for company STZ.
+Loaded 209 QA pairs from 15 conferences for company OXY.
+Loaded 63 QA pairs from 4 conferences for company AEP.
+Loaded 195 QA pairs from 14 conferences for company CTRA.
+Loaded 204 QA pairs from 15 conferences for company DOW.
+Loaded 290 QA pairs from 23 conferences for company HON.
+Loaded 204 QA pairs from 17 conferences for company EQT.
+Loaded 439 QA pairs from 17 conferences for company EXR.
+Loaded 114 QA pairs from 11 conferences for company VRTX.
+Loaded 197 QA pairs from 15 conferences for company SLB.
+Loaded 307 QA pairs from 22 conferences for company XOM.
+Loaded 97 QA pairs from 10 conferences for company DE.
+Loaded 251 QA pairs from 15 conferences for company O.
+Loaded 372 QA pairs from 21 conferences for company PGR.
+Loaded 293 QA pairs from 13 conferences for company ESS.
+Loaded 248 QA pairs from 21 conferences for company XEL.
+Loaded 184 QA pairs from 12 conferences for company DD.
+Loaded 219 QA pairs from 16 conferences for company DVN.
+Loaded 278 QA pairs from 15 conferences for company PSA.
+Loaded 152 QA pairs from 14 conferences for company MOS.
+Loaded 334 QA pairs from 17 conferences for company UNP.
+Loaded 207 QA pairs from 21 conferences for company T.
+Loaded 246 QA pairs from 16 conferences for company UPS.
+Loaded 124 QA pairs from 14 conferences for company MCK.
+Loaded 132 QA pairs from 10 conferences for company LOW.
+Loaded 208 QA pairs from 17 conferences for company MDLZ.
+Loaded 345 QA pairs from 23 conferences for company RTX.
+Loaded 210 QA pairs from 14 conferences for company HAL.
+Loaded 199 QA pairs from 13 conferences for company SPG.
+Loaded 416 QA pairs from 23 conferences for company SPGI.
+Loaded 102 QA pairs from 11 conferences for company TGT.
+Loaded 134 QA pairs from 14 conferences for company NUE.
+Loaded 298 QA pairs from 19 conferences for company LIN.
+Loaded 218 QA pairs from 22 conferences for company MRK.
+Loaded 156 QA pairs from 21 conferences for company PYPL.
+Loaded 380 QA pairs from 22 conferences for company PLD.
+Loaded 184 QA pairs from 14 conferences for company SRE.
+Loaded 373 QA pairs from 23 conferences for company CVX.
+Loaded 101 QA pairs from 14 conferences for company NKE.
+Loaded 238 QA pairs from 19 conferences for company MS.
+Loaded 187 QA pairs from 9 conferences for company EQR.
+Loaded 255 QA pairs from 21 conferences for company AVGO.
+Loaded 331 QA pairs from 23 conferences for company CHTR.
+Loaded 256 QA pairs from 23 conferences for company LMT.
+Loaded 293 QA pairs from 23 conferences for company UBER.
+Loaded 166 QA pairs from 13 conferences for company EMR.
+Loaded 254 QA pairs from 20 conferences for company UNH.
+Loaded 143 QA pairs from 11 conferences for company EIX.
+Loaded 153 QA pairs from 15 conferences for company PARA.
+Loaded 183 QA pairs from 13 conferences for company TXN.
+Loaded 399 QA pairs from 17 conferences for company TTWO.
+Loaded 433 QA pairs from 21 conferences for company GD.
+Loaded 477 QA pairs from 23 conferences for company INTU.
+Loaded 345 QA pairs from 14 conferences for company DTE.
+Loaded 55 QA pairs from 4 conferences for company BX.
+Loaded 511 QA pairs from 21 conferences for company C.
+
+=== BENCH SUMMARY ===
+companies: 107
+total_seconds: 1766.27
+Top stages:
+      runner_run_total: 1763.32s
+           models_init: 2.47s
+            spacy_load: 0.47s
+          save_outputs: 0.01s
+         pipeline_init: 0.00s
+           config_init: 0.00s
+
+Outputs in: runs/bench_scaling_full_215/gpus_2/worker_1_gpu1

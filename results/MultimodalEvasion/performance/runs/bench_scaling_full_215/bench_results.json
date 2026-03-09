@@ -1,0 +1,292 @@
+[
+  {
+    "n_gpus": 1,
+    "gpu_ids": [
+      0
+    ],
+    "n_companies_total": 215,
+    "seconds_wall_total": 3414.015069563,
+    "max_worker_wall_time": 3396.137115805992,
+    "min_worker_wall_time": 3396.137115805992,
+    "exit_codes": [
+      0
+    ],
+    "workers": [
+      {
+        "gpu": 0,
+        "n_companies": 215,
+        "dir": "runs/bench_scaling_full_215/gpus_1/worker_0_gpu0",
+        "summary": {
+          "timestamp_utc": "2026-02-25T16:48:51.121672+00:00",
+          "hostname": "ip-172-31-36-42",
+          "cuda_visible_devices": "0",
+          "n_companies": 215,
+          "n_rows_df_all": 3010,
+          "total_seconds_wall": 3396.137115805992,
+          "stage_times": {
+            "config_init": 3.810011548921466e-06,
+            "spacy_load": 0.4695285410271026,
+            "models_init": 2.389523362973705,
+            "pipeline_init": 2.2370018996298313e-05,
+            "runner_run_total": 3393.2562104130047,
+            "save_outputs": 0.015666243009036407
+          }
+        }
+      }
+    ],
+    "speedup_vs_1gpu": 1.0,
+    "efficiency": 1.0
+  },
+  {
+    "n_gpus": 2,
+    "gpu_ids": [
+      0,
+      1
+    ],
+    "n_companies_total": 215,
+    "seconds_wall_total": 1783.904516923998,
+    "max_worker_wall_time": 1766.268295293994,
+    "min_worker_wall_time": 1739.5889118420018,
+    "exit_codes": [
+      0,
+      0
+    ],
+    "workers": [
+      {
+        "gpu": 0,
+        "n_companies": 108,
+        "dir": "runs/bench_scaling_full_215/gpus_2/worker_0_gpu0",
+        "summary": {
+          "timestamp_utc": "2026-02-25T17:18:10.277907+00:00",
+          "hostname": "ip-172-31-36-42",
+          "cuda_visible_devices": "0",
+          "n_companies": 108,
+          "n_rows_df_all": 1512,
+          "total_seconds_wall": 1739.5889118420018,
+          "stage_times": {
+            "config_init": 3.4609984140843153e-06,
+            "spacy_load": 0.46888298200792633,
+            "models_init": 2.573282855009893,
+            "pipeline_init": 2.225101343356073e-05,
+            "runner_run_total": 1736.5324366670102,
+            "save_outputs": 0.00819894700543955
+          }
+        }
+      },
+      {
+        "gpu": 1,
+        "n_companies": 107,
+        "dir": "runs/bench_scaling_full_215/gpus_2/worker_1_gpu1",
+        "summary": {
+          "timestamp_utc": "2026-02-25T17:18:36.894114+00:00",
+          "hostname": "ip-172-31-36-42",
+          "cuda_visible_devices": "1",
+          "n_companies": 107,
+          "n_rows_df_all": 1498,
+          "total_seconds_wall": 1766.268295293994,
+          "stage_times": {
+            "config_init": 3.630993887782097e-06,
+            "spacy_load": 0.465090494020842,
+            "models_init": 2.4723402230010834,
+            "pipeline_init": 2.2940977942198515e-05,
+            "runner_run_total": 1763.3163924929977,
+            "save_outputs": 0.008239910996053368
+          }
+        }
+      }
+    ],
+    "speedup_vs_1gpu": 1.9137880066864876,
+    "efficiency": 0.9568940033432438
+  },
+  {
+    "n_gpus": 3,
+    "gpu_ids": [
+      0,
+      1,
+      2
+    ],
+    "n_companies_total": 215,
+    "seconds_wall_total": 1245.4063019430032,
+    "max_worker_wall_time": 1227.5904146810062,
+    "min_worker_wall_time": 1177.8262886180019,
+    "exit_codes": [
+      0,
+      0,
+      0
+    ],
+    "workers": [
+      {
+        "gpu": 0,
+        "n_companies": 72,
+        "dir": "runs/bench_scaling_full_215/gpus_3/worker_0_gpu0",
+        "summary": {
+          "timestamp_utc": "2026-02-25T17:38:34.602457+00:00",
+          "hostname": "ip-172-31-36-42",
+          "cuda_visible_devices": "0",
+          "n_companies": 72,
+          "n_rows_df_all": 1008,
+          "total_seconds_wall": 1177.8262886180019,
+          "stage_times": {
+            "config_init": 3.949971869587898e-06,
+            "spacy_load": 0.4601165780040901,
+            "models_init": 2.467730901989853,
+            "pipeline_init": 2.1639978513121605e-05,
+            "runner_run_total": 1174.8848715850036,
+            "save_outputs": 0.007469991978723556
+          }
+        }
+      },
+      {
+        "gpu": 1,
+        "n_companies": 72,
+        "dir": "runs/bench_scaling_full_215/gpus_3/worker_1_gpu1",
+        "summary": {
+          "timestamp_utc": "2026-02-25T17:39:02.982277+00:00",
+          "hostname": "ip-172-31-36-42",
+          "cuda_visible_devices": "1",
+          "n_companies": 72,
+          "n_rows_df_all": 1008,
+          "total_seconds_wall": 1205.9455622920068,
+          "stage_times": {
+            "config_init": 3.910012310370803e-06,
+            "spacy_load": 0.4672174679872114,
+            "models_init": 2.402195736998692,
+            "pipeline_init": 2.2469990653917193e-05,
+            "runner_run_total": 1203.0640741890238,
+            "save_outputs": 0.005879805015865713
+          }
+        }
+      },
+      {
+        "gpu": 2,
+        "n_companies": 71,
+        "dir": "runs/bench_scaling_full_215/gpus_3/worker_2_gpu2",
+        "summary": {
+          "timestamp_utc": "2026-02-25T17:39:24.467168+00:00",
+          "hostname": "ip-172-31-36-42",
+          "cuda_visible_devices": "2",
+          "n_companies": 71,
+          "n_rows_df_all": 994,
+          "total_seconds_wall": 1227.5904146810062,
+          "stage_times": {
+            "config_init": 3.960012691095471e-06,
+            "spacy_load": 0.4631925539870281,
+            "models_init": 2.4000069510075264,
+            "pipeline_init": 2.1921005100011826e-05,
+            "runner_run_total": 1224.715049704013,
+            "save_outputs": 0.0059331369993742555
+          }
+        }
+      }
+    ],
+    "speedup_vs_1gpu": 2.741286168406786,
+    "efficiency": 0.9137620561355954
+  },
+  {
+    "n_gpus": 4,
+    "gpu_ids": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "n_companies_total": 215,
+    "seconds_wall_total": 982.3959881319897,
+    "max_worker_wall_time": 964.6128541259968,
+    "min_worker_wall_time": 888.4548387409886,
+    "exit_codes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "workers": [
+      {
+        "gpu": 0,
+        "n_companies": 54,
+        "dir": "runs/bench_scaling_full_215/gpus_4/worker_0_gpu0",
+        "summary": {
+          "timestamp_utc": "2026-02-25T17:55:49.452093+00:00",
+          "hostname": "ip-172-31-36-42",
+          "cuda_visible_devices": "0",
+          "n_companies": 54,
+          "n_rows_df_all": 756,
+          "total_seconds_wall": 964.6128541259968,
+          "stage_times": {
+            "config_init": 3.7700228858739138e-06,
+            "spacy_load": 0.46093918799306266,
+            "models_init": 2.5901121929928195,
+            "pipeline_init": 2.4690001737326384e-05,
+            "runner_run_total": 961.5509837119898,
+            "save_outputs": 0.004633502016076818
+          }
+        }
+      },
+      {
+        "gpu": 1,
+        "n_companies": 54,
+        "dir": "runs/bench_scaling_full_215/gpus_4/worker_1_gpu1",
+        "summary": {
+          "timestamp_utc": "2026-02-25T17:55:35.347947+00:00",
+          "hostname": "ip-172-31-36-42",
+          "cuda_visible_devices": "1",
+          "n_companies": 54,
+          "n_rows_df_all": 756,
+          "total_seconds_wall": 950.5484322980046,
+          "stage_times": {
+            "config_init": 3.6799756344407797e-06,
+            "spacy_load": 0.46014927301439457,
+            "models_init": 2.65350967599079,
+            "pipeline_init": 2.0620005670934916e-05,
+            "runner_run_total": 947.4239518340037,
+            "save_outputs": 0.0047665860038250685
+          }
+        }
+      },
+      {
+        "gpu": 2,
+        "n_companies": 54,
+        "dir": "runs/bench_scaling_full_215/gpus_4/worker_2_gpu2",
+        "summary": {
+          "timestamp_utc": "2026-02-25T17:54:33.222687+00:00",
+          "hostname": "ip-172-31-36-42",
+          "cuda_visible_devices": "2",
+          "n_companies": 54,
+          "n_rows_df_all": 756,
+          "total_seconds_wall": 888.4548387409886,
+          "stage_times": {
+            "config_init": 3.950000973418355e-06,
+            "spacy_load": 0.46355352498358116,
+            "models_init": 2.648557615990285,
+            "pipeline_init": 2.5371002266183496e-05,
+            "runner_run_total": 885.330719702004,
+            "save_outputs": 0.005876148003153503
+          }
+        }
+      },
+      {
+        "gpu": 3,
+        "n_companies": 53,
+        "dir": "runs/bench_scaling_full_215/gpus_4/worker_3_gpu3",
+        "summary": {
+          "timestamp_utc": "2026-02-25T17:55:21.685055+00:00",
+          "hostname": "ip-172-31-36-42",
+          "cuda_visible_devices": "3",
+          "n_companies": 53,
+          "n_rows_df_all": 742,
+          "total_seconds_wall": 936.8425115589926,
+          "stage_times": {
+            "config_init": 3.5700213629752398e-06,
+            "spacy_load": 0.45760206700651906,
+            "models_init": 2.591099101002328,
+            "pipeline_init": 2.1159998141229153e-05,
+            "runner_run_total": 933.7818083649909,
+            "save_outputs": 0.005927927006268874
+          }
+        }
+      }
+    ],
+    "speedup_vs_1gpu": 3.475192397777087,
+    "efficiency": 0.8687980994442718
+  }
+]
