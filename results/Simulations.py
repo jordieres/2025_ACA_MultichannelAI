@@ -33,7 +33,7 @@ def main():
     qa_results_path = "results/QA/results/"
     k10_results_path = "results/SEC10K/results/"
     monologue_results_path = "results/Monologues/results/"
-    answered_results_path = "results/Answered/results"
+    answered_results_path = "results/Answered/results/"
 
     print("Running QA simulation...")
     qa_sim = QASimulator(models=LLM_MODELS, labeled_data_path=qa_labeled_data, results_path=qa_results_path, results_df=results_df)
