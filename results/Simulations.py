@@ -48,8 +48,8 @@ def main():
     monologue_sim.run()
 
     print("Running Answered simulation...")
-    monologue_sim = AnsweredSimulator(models=LLM_MODELS, labeled_data_path=answered_labeled_data, results_path=answered_results_path, results_df=results_df)
-    monologue_sim.run()
+    answered_sim = AnsweredSimulator(models=LLM_MODELS, labeled_data_path=answered_labeled_data, results_path=answered_results_path, results_df=results_df)
+    answered_sim.run()
 
     print("All simulations completed.")
 
