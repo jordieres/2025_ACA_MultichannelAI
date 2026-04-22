@@ -1,9 +1,9 @@
 import pandas as pd
 
-from ModelsResults.QA.QASimulator import QASimulator
-from ModelsResults.Monologues.MonologueSimulator import MonologueSimulator
-from ModelsResults.SEC10K.SEC10KSimulator import TenKSimulator
-from ModelsResults.Answered.AnsweredSimulator import AnsweredSimulator
+from QA.QASimulator import QASimulator
+from Monologues.MonologueSimulator import MonologueSimulator
+from SEC10K.SEC10KSimulator import TenKSimulator
+from Answered.AnsweredSimulator import AnsweredSimulator
 
 
 results_df = pd.DataFrame(columns=["model_name", "elapsed_time", "accuracy", "precision", "recall", "f1_score"])
@@ -25,15 +25,15 @@ LLM_MODELS = [
 
 def main():
 
-    qa_labeled_data = "/home/aacastro/Alejandro/ACA_MultichanelAI_2025/src/TEXT/label_data/labeled_gold_sample_QA.csv"
-    k10_labeled_data = "/home/aacastro/Alejandro/ACA_MultichanelAI_2025/clean_src/ModelsResults/SEC10K/labeled_gold_sample_10K.csv"
-    monologues_labeled_data = "/home/aacastro/Alejandro/ACA_MultichanelAI_2025/clean_src/ModelsResults/Monologues/loabeled_gold_sample_monologues.csv"
-    answered_labeled_data = "/home/aacastro/Alejandro/ACA_MultichanelAI_2025/2025_ACA_MultichannelAI/ModelsResults/Answered/qa_answering_labeled.json"
+    qa_labeled_data = "results/QA/labeled_gold_sample_QA.csv"
+    k10_labeled_data = "results/SEC10K/labeled_gold_sample_10K.csv"
+    monologues_labeled_data = "results/Monologues/loabeled_gold_sample_monologues.csv"
+    answered_labeled_data = "results/Answered/qa_answering_labeled.json"
 
-    qa_results_path = "/home/aacastro/Alejandro/ACA_MultichanelAI_2025/clean_src/ModelsResults/QA/results/"
-    k10_results_path = "/home/aacastro/Alejandro/ACA_MultichanelAI_2025/clean_src/ModelsResults/SEC10K/results/"
-    monologue_results_path = "/home/aacastro/Alejandro/ACA_MultichanelAI_2025/clean_src/ModelsResults/Monologues/results/"
-    answered_results_path = "/home/aacastro/Alejandro/ACA_MultichanelAI_2025/2025_ACA_MultichannelAI/ModelsResults/Answered/results"
+    qa_results_path = "results/QA/results/"
+    k10_results_path = "results/SEC10K/results/"
+    monologue_results_path = "results/Monologues/results/"
+    answered_results_path = "results/Answered/results"
 
     print("Running QA simulation...")
     qa_sim = QASimulator(models=LLM_MODELS, labeled_data_path=qa_labeled_data, results_path=qa_results_path, results_df=results_df)

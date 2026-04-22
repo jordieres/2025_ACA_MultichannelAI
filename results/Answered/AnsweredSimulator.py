@@ -2,9 +2,9 @@ from dataclasses import dataclass
 import pandas as pd
 import json
 
-from MULTIMODAL.TEXT.Analyze.QuestionAnswerAnalizer import QAAnalyzer
-from ..BaseLLMSimulator import BaseLLMSimulator
-from ..ModelMetrics import ModelMetrics
+from multimodal_fin.processing.metadata.qa_analyzer import QAAnalyzer
+from BaseLLMSimulator import BaseLLMSimulator
+from ModelMetrics import ModelMetrics
 
 @dataclass
 class AnsweredSimulator(BaseLLMSimulator):

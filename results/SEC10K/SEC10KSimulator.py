@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 import pandas as pd
 
-from MULTIMODAL.TEXT.Analyze.InterventionAnalyzer import InterventionAnalyzer
-from ..BaseLLMSimulator import BaseLLMSimulator
-from ..ModelMetrics import ModelMetrics
+from multimodal_fin.processing.metadata.sec10k_analyzer import SEC10KAnalyzer
+from BaseLLMSimulator import BaseLLMSimulator
+from ModelMetrics import ModelMetrics
 
 @dataclass
 class TenKSimulator(BaseLLMSimulator):
@@ -11,7 +11,7 @@ class TenKSimulator(BaseLLMSimulator):
     task_name: str = "SEC 10K Classification"
 
     def classify_with_model(self, model_name: str) -> pd.DataFrame:
-        classifier = InterventionAnalyzer(model_name, NUM_EVALUATIONS=1)
+        classifier = SEC10KAnalyzer(model_name, NUM_EVALUATIONS=1)
         df = pd.read_csv(self.labeled_data_path)
         return classifier.classify_dataframe(df)
 
