@@ -51,7 +51,7 @@ class ModelMetrics:
 
         fig.savefig(os.path.join(self.results_path, f'{self.model_name}_metrics.png'), bbox_inches='tight')
         # plt.show(fig)
-        # plt.close(fig)
+        plt.close(fig)
 
     def plot_f1_vs_time_all_models(self, df: pd.DataFrame):
         plt.figure(figsize=(10, 6))
@@ -68,7 +68,8 @@ class ModelMetrics:
         output_path = os.path.join(self.results_path, f"{self.task_name.replace(' ', '_')}_scatter.png")
         plt.savefig(output_path, bbox_inches="tight")
         # plt.show()
-        # plt.close()
+        plt.close()
+        
 
     def get_results(self, df: pd.DataFrame) -> dict:
         metrics = self.get_metrics(df)
