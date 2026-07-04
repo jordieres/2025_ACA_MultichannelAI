@@ -1,0 +1,216 @@
+company,sector,market_cap,company_size
+AAPL,Technology,4629454651392.0,large
+ABBV,Healthcare,380567158784.0,large
+ABNB,Consumer Cyclical,79737389056.0,large
+ABT,Healthcare,151485497344.0,large
+ACN,Technology,114606333952.0,large
+ADBE,Technology,105944858624.0,large
+ADP,Technology,92410568704.0,large
+AEP,Utilities,69161189376.0,large
+ALB,Basic Materials,20257634304.0,large
+AMAT,Technology,389079793664.0,large
+AMD,Technology,850423382016.0,large
+AMGN,Healthcare,177164648448.0,large
+AMT,Real Estate,86437134336.0,large
+AMZN,Consumer Cyclical,2759413727232.0,large
+APD,Basic Materials,62192492544.0,large
+AVB,Real Estate,26016499712.0,large
+AVGO,Technology,2280074248192.0,large
+AWK,Utilities,24152295424.0,large
+AXP,Financial Services,212183056384.0,large
+AZO,Consumer Cyclical,49587597312.0,large
+BA,Industrials,171613421568.0,large
+BAC,Financial Services,372429094912.0,large
+BKNG,Consumer Cyclical,129567432704.0,large
+BKR,Energy,64028114944.0,large
+BLK,Financial Services,158177230848.0,large
+BMY,Healthcare,111211200512.0,large
+BSX,Healthcare,70869417984.0,large
+BX,Financial Services,140450136064.0,large
+C,Financial Services,223874023424.0,large
+CAT,Industrials,419051175936.0,large
+CB,Financial Services,121117065216.0,large
+CBRE,Real Estate,37439528960.0,large
+CCI,Real Estate,39245758464.0,large
+CEG,Utilities,97909161984.0,large
+CF,Basic Materials,17433851904.0,large
+CHD,Consumer Defensive,22779756544.0,large
+CHTR,Communication Services,19803090944.0,large
+CI,Healthcare,72143273984.0,large
+CL,Consumer Defensive,70632710144.0,large
+CMCSA,Communication Services,88769880064.0,large
+CMG,Consumer Cyclical,37532794880.0,large
+COP,Energy,142382022656.0,large
+COST,Consumer Defensive,423364329472.0,large
+CRM,Technology,164487954432.0,large
+CSCO,Technology,504503631872.0,large
+CSGP,Real Estate,13745253376.0,large
+CSX,Industrials,85734522880.0,large
+CTAS,Industrials,69347721216.0,large
+CTRA,Energy,24724652032.0,large
+CTVA,Basic Materials,51880366080.0,large
+CVX,Energy,373524168704.0,large
+D,Utilities,58461196288.0,large
+DD,Basic Materials,19710132224.0,large
+DE,Industrials,156459646976.0,large
+DHI,Consumer Cyclical,41944260608.0,large
+DHR,Healthcare,124645482496.0,large
+DIS,Communication Services,176099639296.0,large
+DLR,Real Estate,66982727680.0,large
+DOW,Basic Materials,25024143360.0,large
+DTE,Utilities,29675239424.0,large
+DUK,Utilities,94401306624.0,large
+DVN,Energy,53310296064.0,large
+EA,Communication Services,50654306304.0,large
+ECL,Basic Materials,72121180160.0,large
+EIX,Utilities,27289585664.0,large
+ELV,Healthcare,84482678784.0,large
+EMN,Basic Materials,8767211520.0,mid
+EMR,Industrials,79550996480.0,large
+EOG,Energy,73811664896.0,large
+EQIX,Real Estate,105705472000.0,large
+EQR,Real Estate,25581955072.0,large
+EQT,Energy,34201137152.0,large
+ESS,Real Estate,19131844608.0,large
+ETN,Industrials,162161836032.0,large
+ETR,Utilities,49268625408.0,large
+EXC,Utilities,46044364800.0,large
+EXR,Real Estate,31402536960.0,large
+F,Consumer Cyclical,64352784384.0,large
+FANG,Energy,56937811968.0,large
+FCX,Basic Materials,103101792256.0,large
+FI,,,
+FOXA,Communication Services,27602038784.0,large
+GD,Industrials,91299930112.0,large
+GE,Industrials,331963269120.0,large
+GEV,Industrials,260569710592.0,large
+GILD,Healthcare,158387077120.0,large
+GIS,Consumer Defensive,17648838656.0,large
+GM,Consumer Cyclical,73693102080.0,large
+GOOG,Communication Services,4342054125568.0,large
+GS,Financial Services,314058997760.0,large
+HAL,Energy,33524512768.0,large
+HD,Consumer Cyclical,310621765632.0,large
+HES,,,
+HLT,Consumer Cyclical,75772764160.0,large
+HON,Industrials,149054226432.0,large
+IBM,Technology,309438447616.0,large
+ICE,Financial Services,80517677056.0,large
+IFF,Basic Materials,18698426368.0,large
+INTU,Technology,88117207040.0,large
+IPG,,,
+IRM,Real Estate,38220021760.0,large
+ISRG,Healthcare,142479704064.0,large
+ITW,Industrials,71516463104.0,large
+JNJ,Healthcare,536544575488.0,large
+JPM,Financial Services,806425722880.0,large
+KDP,Consumer Defensive,41306587136.0,large
+KHC,Consumer Defensive,27664193536.0,large
+KKR,Financial Services,88069103616.0,large
+KMB,Consumer Defensive,32360863744.0,large
+KMI,Energy,69948522496.0,large
+KO,Consumer Defensive,337357668352.0,large
+KR,Consumer Defensive,37955477504.0,large
+KVUE,Consumer Defensive,33254549504.0,large
+LIN,Basic Materials,229282643968.0,large
+LLY,Healthcare,948946599936.0,large
+LMT,Industrials,118378274816.0,large
+LOW,Consumer Cyclical,115925041152.0,large
+LYB,Basic Materials,21726642176.0,large
+LYV,Communication Services,39011975168.0,large
+MA,Financial Services,422070321152.0,large
+MAR,Consumer Cyclical,98556264448.0,large
+MCD,Consumer Cyclical,196355391488.0,large
+MCK,Healthcare,88563941376.0,large
+MDLZ,Consumer Defensive,78392492032.0,large
+MDT,Healthcare,94686511104.0,large
+META,Communication Services,1517037944832.0,large
+MLM,Basic Materials,34642280448.0,large
+MMC,,,
+MMM,Industrials,79747629056.0,large
+MNST,Consumer Defensive,86299435008.0,large
+MO,Consumer Defensive,115623264256.0,large
+MOS,Basic Materials,7405827072.0,mid
+MPC,Energy,76796854272.0,large
+MRK,Healthcare,285635215360.0,large
+MS,Financial Services,339084705792.0,large
+MSFT,Technology,3278242578432.0,large
+MTCH,Communication Services,8238973952.0,mid
+NEE,Utilities,178694668288.0,large
+NEM,Basic Materials,116897030144.0,large
+NFLX,Communication Services,350885838848.0,large
+NKE,Consumer Cyclical,64759189504.0,large
+NOW,Technology,131646472192.0,large
+NUE,Basic Materials,58861924352.0,large
+NVDA,Technology,5396923154432.0,large
+NWS,Communication Services,16459108352.0,large
+O,Real Estate,55865626624.0,large
+OKE,Energy,54636449792.0,large
+OMC,Communication Services,21438167040.0,large
+ORLY,Consumer Cyclical,71460102144.0,large
+OXY,Energy,58772963328.0,large
+PANW,Technology,241012981760.0,large
+PARA,,,
+PCG,Utilities,36490862592.0,large
+PEG,Utilities,39028531200.0,large
+PEP,Consumer Defensive,194105606144.0,large
+PFE,Healthcare,145620795392.0,large
+PGR,Financial Services,114844483584.0,large
+PH,Industrials,105448570880.0,large
+PLD,Real Estate,130909577216.0,large
+PM,Consumer Defensive,270659338240.0,large
+PPG,Basic Materials,25330356224.0,large
+PPL,Utilities,26204362752.0,large
+PSA,Real Estate,52512755712.0,large
+PSX,Energy,73194692608.0,large
+PYPL,Financial Services,39280156672.0,large
+QCOM,Technology,253845356544.0,large
+RCL,Consumer Cyclical,77991092224.0,large
+ROST,Consumer Cyclical,72393449472.0,large
+RTX,Industrials,234673045504.0,large
+SBAC,Real Estate,20810625024.0,large
+SBUX,Consumer Cyclical,108852748288.0,large
+SCHW,Financial Services,152365662208.0,large
+SHW,Basic Materials,72264237056.0,large
+SLB,Energy,84560461824.0,large
+SO,Utilities,102032023552.0,large
+SPG,Real Estate,77337247744.0,large
+SPGI,Financial Services,123568160768.0,large
+SRE,Utilities,58537947136.0,large
+STLD,Basic Materials,39140790272.0,large
+STZ,Consumer Defensive,23553445888.0,large
+SYK,Healthcare,112439705600.0,large
+SYY,Consumer Defensive,35433328640.0,large
+T,Communication Services,171207065600.0,large
+TDG,Industrials,69748056064.0,large
+TGT,Consumer Defensive,55947259904.0,large
+TJX,Consumer Cyclical,169782018048.0,large
+TMO,Healthcare,179151273984.0,large
+TMUS,Communication Services,204352716800.0,large
+TRGP,Energy,56515735552.0,large
+TSLA,Consumer Cyclical,1591450402816.0,large
+TT,Industrials,101446778880.0,large
+TTWO,Communication Services,41288552448.0,large
+TXN,Technology,280417796096.0,large
+UBER,Technology,145789599744.0,large
+UNH,Healthcare,343205937152.0,large
+UNP,Industrials,157144006656.0,large
+UPS,Industrials,92591185920.0,large
+V,Financial Services,603461320704.0,large
+VICI,Real Estate,29654525952.0,large
+VLO,Energy,76685860864.0,large
+VMC,Basic Materials,36570116096.0,large
+VRTX,Healthcare,107890147328.0,large
+VST,Utilities,53264715776.0,large
+VTR,Real Estate,38956777472.0,large
+VZ,Communication Services,199883997184.0,large
+WBD,Communication Services,68143976448.0,large
+WEC,Utilities,35904741376.0,large
+WELL,Real Estate,137900392448.0,large
+WFC,Financial Services,243101450240.0,large
+WM,Industrials,85105942528.0,large
+WMB,Energy,87212007424.0,large
+WMT,Consumer Defensive,899740401664.0,large
+WY,Real Estate,17586229248.0,large
+XEL,Utilities,48611872768.0,large
+XOM,Energy,619918262272.0,large
