@@ -31,6 +31,8 @@ class TranscriptQALoader:
                     a = data[pair]["answer"]
                     ans_cat = data[pair]["qa_response_classification"]["Predicted_category"]
                     conf = data[pair]["qa_response_classification"]["Confidence"]
+                    q_topic_10k = data[pair]['question_topic_classification']["Predicted_category"]
+                    a_topic_10k = data[pair]['answer_topic_classification']["Predicted_category"]
 
                     mm = data[pair].get("multimodal_embeddings", {}).get("answer", None)
                     if mm is not None:
@@ -38,8 +40,11 @@ class TranscriptQALoader:
                         audio_mean = audio_mean.tolist() if audio_mean is not None else None
                         text_mean  = text_mean.tolist()  if text_mean  is not None else None
                         video_mean = video_mean.tolist() if video_mean is not None else None
+                        audio_sentences = mm.get("audio", [])  # lista de listas (n_sentences, 7)
                     else:
                         audio_mean = text_mean = video_mean = None
+
+                    coherence_analyses = data[pair].get("coherence_analyses", [])
 
                     records.append({
                         "company": company,
@@ -49,11 +54,15 @@ class TranscriptQALoader:
                         "question": q,
                         "answer": a,
                         "answered": str(ans_cat).lower(),
+                        "q_topic_10k": q_topic_10k,
+                        "a_topic_10k": a_topic_10k,
                         "confidence": conf,
                         "qa_text": f"{q} {a}",
                         "audio_emo_mean": audio_mean,
                         "text_emo_mean": text_mean,
                         "video_emo_mean": video_mean,
+                        "audio_sentences": audio_sentences,
+                        "coherence_analyses": coherence_analyses,
                     })
 
         df = pd.DataFrame(records)

@@ -134,7 +134,7 @@ class EventPipeline:
             logger.warning(f"[{ticker}] Multiple matches for {year} {quarter}, returning the first.")
         return matches[0]
     
-    def list_company_events(self, ticker: str, use_rich: bool = True, return_df: bool = False):
+    def list_company_events(self, ticker: str, use_rich: bool = True, return_df: bool = False, verbose: int = 0):
         """List all events for a given company with quarter, year, and event date.
 
         Args:
@@ -156,42 +156,43 @@ class EventPipeline:
         df_t["label_start_date"] = pd.to_datetime(df_t["label_start_date"], errors="coerce")
         df_t["label_end_date"] = pd.to_datetime(df_t["label_end_date"], errors="coerce")
 
-        if use_rich:
-            console = Console()
-            company_name = (
-                self.df_conf[self.df_conf["symbol"] == ticker]["company"].iloc[0]
-                if "company" in self.df_conf.columns
-                else ticker
-            )
-            table = Table(title=f"📊 Events for {company_name} ({ticker})", show_lines=True)
-
-            # table.add_column("Index", justify="center", style="bold cyan")
-            table.add_column("Date", justify="center")
-            table.add_column("Quarter", justify="center")
-            table.add_column("Year", justify="center")
-            table.add_column("Event Window", justify="center", style="dim")
-
-            for i, row in df_t.iterrows():
-                start = row["label_start_date"].date() if pd.notnull(row["label_start_date"]) else "—"
-                end = row["label_end_date"].date() if pd.notnull(row["label_end_date"]) else "—"
-                table.add_row(
-                    # str(i),
-                    str(row["timestamp"].date()),
-                    row["quarter"] or "?",
-                    str(row["year"]),
-                    f"{start} → {end}",
+        if verbose >= 1:
+            if use_rich:
+                console = Console()
+                company_name = (
+                    self.df_conf[self.df_conf["symbol"] == ticker]["company"].iloc[0]
+                    if "company" in self.df_conf.columns
+                    else ticker
                 )
+                table = Table(title=f"📊 Events for {company_name} ({ticker})", show_lines=True)
 
-            console.print(table)
-        else:
-            print(f"\nEvents for {ticker}:")
-            print("-" * 60)
-            for i, row in df_t.iterrows():
-                print(
-                    f"[{i}] {row['timestamp'].date()} | {row['quarter']} {row['year']} "
-                    f"| Window: {row['label_start_date']} → {row['label_end_date']}"
-                )
-            print("-" * 60)
+                # table.add_column("Index", justify="center", style="bold cyan")
+                table.add_column("Date", justify="center")
+                table.add_column("Quarter", justify="center")
+                table.add_column("Year", justify="center")
+                table.add_column("Event Window", justify="center", style="dim")
+
+                for i, row in df_t.iterrows():
+                    start = row["label_start_date"].date() if pd.notnull(row["label_start_date"]) else "—"
+                    end = row["label_end_date"].date() if pd.notnull(row["label_end_date"]) else "—"
+                    table.add_row(
+                        # str(i),
+                        str(row["timestamp"].date()),
+                        row["quarter"] or "?",
+                        str(row["year"]),
+                        f"{start} → {end}",
+                    )
+
+                console.print(table)
+            else:
+                print(f"\nEvents for {ticker}:")
+                print("-" * 60)
+                for i, row in df_t.iterrows():
+                    print(
+                        f"[{i}] {row['timestamp'].date()} | {row['quarter']} {row['year']} "
+                        f"| Window: {row['label_start_date']} → {row['label_end_date']}"
+                    )
+                print("-" * 60)
 
         if return_df:
             return df_t.reset_index(drop=True)
